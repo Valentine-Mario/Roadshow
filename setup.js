@@ -1,6 +1,7 @@
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var passport=require('passport')
 require('dotenv').config()
+var TwitterStrategy= require('passport-twitter').Strategy
 const User=require('./models/user')
 passport.serializeUser((user, done)=>{
     done(null, user._id)
