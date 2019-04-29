@@ -14,5 +14,7 @@ router.post('/add', userController.addUser)
 router.get('/approve/:id', userController.approveEmail)
 router.post('/login', userController.login)
 router.get('/getprofile', verification.verifyToken, userController.getProfile)
+router.post('/edit', verification.verifyToken, userController.editDetails)
+router.post('/changepassword', verification.verifyToken, userController.changePassword)
 
 module.exports = router;

@@ -139,3 +139,65 @@ exports.login=(req, res)=>{
           console.log(e)
       }
   }
+
+
+  exports.editDetails=(req, res)=>{
+    var data={
+        name:req.body.name,
+        email:req.body.email,
+    }
+    try{
+        
+            jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
+               
+                
+                userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                   if(err){
+                    if (err.name === 'MongoError' && err.code === 11000) {
+                        res.json({code:"01", message:"email already exist"})
+                      }
+                   } else{
+                    res.json({code:"00", message:"update successful"});
+                   }                      
+                })   
+               
+                })
+           
+        
+    }catch(e){
+        console.log(e)
+    }
+  }
+
+  exports.changePassword=(req, res)=>{
+    var old_password= req.body.old_password
+    var data={
+        password:req.body.password
+    }
+    try{
+        jwt.verify(req.token, "golden_little_kids", (err, user)=>{
+            userModel.findById(user.user, (err, user_info)=>{
+                bcrypt.compare(old_password, user_info.password, function(err, passwordVal){
+                    if(!passwordVal){
+                        res.json({message:"wrong old password"})
+                    }else{
+                        if(data.password.length<6){
+                            res.json({code:"01", message:"password should be 6 or more characters"})
+                        }else{
+                            bcrypt.hash(data.password, 15, function(err, hash) {
+                                data.password = hash;
+                                userModel.findByIdAndUpdate(user.user, data, function(err){
+                                    if(err) res.json({err:err, message:"error, could not update password"})
+                                    res.json({code:"00", message:"password changed successfully."})
+                                })
+                            })
+                        }
+                        
+                    }
+            })
+        })
+    })
+    }catch(e){
+        console.log(e)
+    }
+  }
