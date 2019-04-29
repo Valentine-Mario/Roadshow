@@ -7,7 +7,8 @@ var schema= new mongoose.Schema({
     activity:[Object],
     auth_id:String,
     verified:{type:Boolean, default:false},
-    date_created:Date
+    date_created:Date,
+    access:{type:Number, default:0}
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('user', schema);

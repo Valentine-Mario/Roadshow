@@ -21,19 +21,26 @@ passport.use(new GoogleStrategy({
         User.findOne({auth_id: profile.id}, (err, user_value)=>{
             if(user_value!==null){
                 console.log("log in successful")
-                done(null, user_value)
+                done(null, user_value._id)
             }else{
-                new User({
+                data={
                     name:profile.displayName,
                     email:profile.emails[0].value,
                     password:null,
                     auth_id:profile.id,
                     verified:true,
+                    access:0,
                     date_created:Date.now()
-                    }).save().then(val=>{
-                        
-                        done(null, val._id)
-                    })
+                }
+                User.create(data, (err, user_details)=>{
+                    if(err){
+                        if (err.name === 'MongoError' && err.code === 11000) {
+                            done(null)
+                          }
+                    }else{
+                        done(null, user_details._id)
+                    }
+                })
             }
            })
     
