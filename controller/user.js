@@ -201,3 +201,21 @@ exports.login=(req, res)=>{
         console.log(e)
     }
   }
+
+  exports.deleteAccount=(req, res)=>{
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            if(err){
+                res.json({err:err, message:"error decoding information"})
+            }else{
+                userModel.findByIdAndRemove(decoded_user.user, (err)=>{
+                    if(err)res.json({code:"01", message:"error deleting account"})
+                    res.json({code:"00", message:"account deleted successfully"})
+                })
+            }
+            
+        })
+    }catch(e){
+        console.log(e)
+    }
+  }
