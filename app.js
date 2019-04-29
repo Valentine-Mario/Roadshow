@@ -6,6 +6,7 @@ var mongoose=require('mongoose')
 const passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var adminRouter= require('./routes/admin')
 var googleSetUp= require('./setup')
 require('dotenv').config()
 var app = express();
@@ -36,5 +37,6 @@ mongoose.connect(url, { useNewUrlParser: true });
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
+app.use('/admin', adminRouter)
 
 module.exports = app;

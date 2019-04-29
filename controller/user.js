@@ -219,3 +219,36 @@ exports.login=(req, res)=>{
         console.log(e)
     }
   }
+
+  exports.notifyUsers=(req, res)=>{
+    var data={
+        header:req.body.header,
+        content:req.body.content
+    }
+    try{
+       userModel.find({verified:true}, (err, user)=>{
+            for(item of user){
+                var mailOption={
+                    from:`Road Show`,
+                    to:item.email,
+                    subject:`${data.header}`,
+                    html:`
+                    ${data.content}
+                    `
+                };
+                transporter.sendMail(mailOption, function(err, info){
+                    if(err){
+                        console.log(err)
+                        return false
+                    }else{
+                        console.log("email sent")
+                        res.json({code:"00", message:"email sent successfully"})
+                        return true;
+                    }
+                })
+            }
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
