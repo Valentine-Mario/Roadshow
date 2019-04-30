@@ -93,6 +93,29 @@ exports.approveUser=(req, res)=>{
     }
 }
 
+exports.unapproveUser=(req, res)=>{
+    var id={_id:req.params.id}
+    var data={
+        verified:false
+    }
+    try{
+        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
+            adminModel.findById(decoded_user.user, (err, admin)=>{
+                if(admin.access< 1){
+                    res.json({code:"01", message:"only admin authorised to view this route"})
+                }else{
+                    adminModel.findByIdAndUpdate(id, data, (err)=>{
+                        if(err)res.json({code:"01", err:err, message:"error unapproving user"})
+                        res.json({code:"00", message:"unapprove successful"})
+                    })
+                }
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
 exports.makeAdmin=(req, res)=>{
     var id={_id:req.params.id}
     var data={
