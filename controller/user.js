@@ -1,7 +1,10 @@
 const userModel= require('../models/user');
 const jwt=require('jsonwebtoken');
-const bcrypt=require('bcryptjs')
+const bcrypt=require('bcryptjs');
+var pdf = require('html-pdf');
+var cloudinary= require('cloudinary')
 require('dotenv').config()
+const fs = require('fs');
 var nodemailer = require('nodemailer');
   var transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -11,7 +14,11 @@ var nodemailer = require('nodemailer');
           pass: process.env.EMAIL_PASSWORD
       }
   });
-const fs = require('fs');
+cloudinary.config({ 
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET 
+  });
 
 exports.addGoogleUser=(req, res)=>{
     try{
@@ -247,6 +254,79 @@ exports.login=(req, res)=>{
                     }
                 })
             }
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.requestPdf=(req, res)=>{
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findById(decoded_user.user, (err, user)=>{
+                if(err){
+                    res.json({code:"01", err:err, message:"error getting user details"})
+                }else{
+                    if(user.activity.length<1){
+                        res.json({code:"01", message:"you have no booking records"})
+                    }else{
+                        fs.appendFile(`./files/${user._id}.pdf`, '', (err)=>{
+                            if(err){
+                                res.json({code:"01", message:"error creating pdf. Try again"})
+                            }else{
+                                var options = { format: 'Letter' };
+                        var str=`<div style="padding-left:10px; padding-right:10px;"> 
+                        <img src="https://res.cloudinary.com/rchain/image/upload/v1556621544/roadshow.png" height="200" width="200" style="border-radius:50%;">
+                        </div>
+                        <br/>
+                        <div style="font-size:18px; align="center">
+                          ${user.name} booking details </div>
+                          <hr/>
+                          <ol style="padding-top:10px;">`
+                        for(a of user.activity){
+                            str += '<li style="font-size:15px;"> description:'+ a.description + '<br/> date:'+ a.date + '<br/> price'+ a.price+ '</li> <hr/>';
+
+                        }
+                        str += '</ol">';
+                        str+='<small><i>Thank you for using Roadshow </i></small>'
+                        pdf.create(str, options).toFile(`./files/${user._id}.pdf`, function(err, response) {
+                            if(err){
+                                res.json({code:"01", err:err, message:"error writing to pdf"})
+                            }else{
+                                cloudinary.uploader.upload(`./files/${user._id}.pdf`, (pdf_details)=>{
+
+                                }, {resource_type:"auto"}).then((user_pdf)=>{
+                                    user_link=user_pdf.secure_url
+                                    var mailOption={
+                                        from:`Road Show`,
+                                        to:user.email,
+                                        subject:`Booking details in PDF`,
+                                        html:`
+                                       <div>
+                                       Below is a link that contains your booking activities
+                                       </div>
+                                       <br/>
+                                       <a href="${user_link}">pdf file</a>
+                                        `
+                                    };
+                                    transporter.sendMail(mailOption, function(err, info){
+                                        if(err){
+                                            console.log(err)
+                                            return false
+                                        }else{
+                                            console.log("email sent")
+                                            res.json({code:"00", message:"email sent successfully"})
+                                            return true;
+                                        }
+                                    })
+                                })
+                            }
+                          })
+                            }
+                        })
+                    }
+                }
+            })
         })
     }catch(e){
         console.log(e)

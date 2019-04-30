@@ -18,5 +18,6 @@ router.post('/edit', verification.verifyToken, userController.editDetails)
 router.post('/changepassword', verification.verifyToken, userController.changePassword)
 router.get('/delete', verification.verifyToken, userController.deleteAccount)
 router.post('/notify', userController.notifyUsers)
+router.get('/request', verification.verifyToken, userController.requestPdf)
 
 module.exports = router;
