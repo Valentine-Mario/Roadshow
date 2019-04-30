@@ -35,7 +35,7 @@ var url='mongodb://localhost:27017/road-show'
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true });
 
-app.use('/', indexRouter);
+app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
 
