@@ -11,6 +11,7 @@ cloudinary.config({
 
 exports.addHotel=(req, res)=>{
    var data={
+    name:req.body.name,
     images:req.files,
     location:req.body.location,
     information:req.body.information,
@@ -197,6 +198,35 @@ exports.removeInterest=(req, res)=>{
                     res.json({code:"01", message:"item not found"})
                 }
             }
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.editDetails=(req, res)=>{
+    var data={
+        name:req.body.name,
+        location:req.body.location,
+        description:req.body.description,
+    }
+    var id={_id:req.params.id}
+    try{
+        hotelModel.findByIdAndUpdate(id, data, (err)=>{
+            if(err)res.json({code:"01", message:"error editing details"})
+            res.json({code:"00", message:"details modified successfully"})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.deleteDetails=(req, res)=>{
+    var id={_id:req.params.id}
+    try{
+        hotelModel.findByIdAndRemove(id, (err)=>{
+            if(err)res.json({code:"01", message:"error deleting details"})
+            res.json({code:"00", messaeg:"hotel deleted successfully"})
         })
     }catch(e){
         console.log(e)

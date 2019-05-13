@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
 var schema= new mongoose.Schema({
+    name:String,
    images:[String],
    location:String,
    information:[String],
