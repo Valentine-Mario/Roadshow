@@ -3,7 +3,8 @@ var mongoosePaginate = require('mongoose-paginate');
 var schema= new mongoose.Schema({
    comment:String,
    hotel:String,
-   rating:Number
+   rating:Number,
+   user:{type:mongoose.Schema.Types.ObjectId, ref:'user'}
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('reviews', schema);

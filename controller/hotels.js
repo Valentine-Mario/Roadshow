@@ -232,3 +232,52 @@ exports.deleteDetails=(req, res)=>{
         console.log(e)
     }
 }
+
+exports.getHotels=(req, res)=>{
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 10,
+        sort:{'_id':-1}
+}
+try{
+    hotelModel.paginate({}, options, (err, hotel)=>{
+        if(err)res.json({code:"01", messaeg:"error geting hotels"})
+        res.json({code:"00", messaeg:hotel})
+    })
+}catch(e){
+    console.log(e)
+}
+}
+
+exports.getHotelId= (req, res)=>{
+    var id={_id:req.params.id}
+    try{
+        hotelModel.findById(id, (err, hotel)=>{
+            if(err)res.json({code:"01", err:err, message:"error getting details"})
+            res.json({code:"00", messaeg:hotel})
+        }).populate({
+            path:'rooms'
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.searchHotel=(req, res)=>{
+    var value= req.params.value;
+    var {page, limit}= req.query;
+   var options={
+       page:parseInt(page, 10) || 1,
+       limit:parseInt(limit, 10) || 10,
+       sort:{'_id':-1}
+}
+    try{
+        hotelModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"description":{$regex: value, $options: 'gi'}}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, hotel)=>{
+            if(err)res.json({code:"01", messaeg:"error returning hotels"})
+            res.json({code:"00", messaeg:hotel})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}

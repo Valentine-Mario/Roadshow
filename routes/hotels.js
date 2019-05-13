@@ -22,5 +22,8 @@ router.post('/addinterest/:id', hotelController.addInterest)
 router.post('/removeinterest/:id', hotelController.removeInterest)
 router.post('/edit/:id', hotelController.editDetails)
 router.get('/delete/:id', hotelController.deleteDetails)
+router.get('/get', hotelController.getHotels)
+router.get('/get/:id', hotelController.getHotelId)
+router.get('/search/:value', hotelController.searchHotel)
 
 module.exports = router;
