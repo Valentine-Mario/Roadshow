@@ -7,4 +7,4 @@ var schema= new mongoose.Schema({
    available:Number
 })
 schema.plugin(mongoosePaginate);
-module.exports= mongoose.model('reviews', schema);
+module.exports= mongoose.model('rooms', schema);

@@ -8,7 +8,8 @@ var mongoose=require('mongoose')
 const passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var adminRouter= require('./routes/admin')
+var adminRouter= require('./routes/admin');
+var hotelRouter= require('./routes/hotels')
 var googleSetUp= require('./setup')
 require('dotenv').config()
 var app = express();
@@ -37,6 +38,7 @@ var url='mongodb://localhost:27017/road-show'
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true });
 
+app.use('/hotel', hotelRouter)
 app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
