@@ -199,3 +199,33 @@ exports.getVenue=(req, res)=>{
         console.log(e)
     }
 }
+
+exports.getId=(req, res)=>{
+    var id={_id:req.params.id}
+    try{
+        venueModel.findById(id, (err, venue)=>{
+            if(err)res.json({code:"01", message:"error getting venue"})
+            res.json({code:"00", message:venue})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.searchVenue=(req, res)=>{
+    var value= req.params.value;
+    var {page, limit}= req.query;
+   var options={
+       page:parseInt(page, 10) || 1,
+       limit:parseInt(limit, 10) || 10,
+       sort:{'_id':-1}
+}
+    try{
+        venueModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"pricing":{$regex: value, $options: 'gi'}}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, venue)=>{
+            if(err)res.json({code:"01", messaeg:"error returning venue"})
+            res.json({code:"00", messaeg:venue})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}

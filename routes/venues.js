@@ -19,4 +19,6 @@ router.post('/removeamneties/:id', venueController.removeAmenities)
 router.post('/edit/:id', venueController.editVenue)
 router.get('/delete/:id', venueController.deleteVenue)
 router.get('/get', venueController.getVenue)
+router.get('/get/:id', venueController.getId)
+router.get('/search/:value', venueController.searchVenue)
 module.exports = router;
