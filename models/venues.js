@@ -4,7 +4,7 @@ var schema= new mongoose.Schema({
    name:String,
    images:[String],
    location:String,
-   information:[String],
+   amenities:[String],
    description:String,
    availability:String,
    rates:[],
@@ -14,4 +14,4 @@ var schema= new mongoose.Schema({
    type:String
 })
 schema.plugin(mongoosePaginate);
-module.exports= mongoose.model('hotels', schema);
+module.exports= mongoose.model('venues', schema);
