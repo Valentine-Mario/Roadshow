@@ -4,7 +4,8 @@ var schema= new mongoose.Schema({
    comment:String,
    hotel:String,
    rating:Number,
-   user:{type:mongoose.Schema.Types.ObjectId, ref:'user'}
+   user:{type:mongoose.Schema.Types.ObjectId, ref:'user'},
+   date:Date
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('reviews', schema);

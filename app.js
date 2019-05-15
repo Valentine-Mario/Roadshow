@@ -14,6 +14,7 @@ var roomRouter=require('./routes/room');
 var hotelreviewRouter=require('./routes/hotel-review')
 var venueRouter=require('./routes/venues')
 var venuereviewRouter=require('./routes/venue-review')
+var carRouter=require('./routes/car')
 var googleSetUp= require('./setup')
 require('dotenv').config()
 var app = express();
@@ -42,6 +43,7 @@ var url='mongodb://localhost:27017/road-show'
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true });
 
+app.use('/car', carRouter)
 app.use('/venuereview', venuereviewRouter)
 app.use('/venue', venueRouter)
 app.use('/hotelreview', hotelreviewRouter)

@@ -9,7 +9,8 @@ exports.addReview=(req, res)=>{
         comment:req.body.comment,
         hotel:'',
         rating:req.body.rating,
-        user:''
+        user:'',
+        date:Date.now()
     }
     var id={_id:req.params.id}
     try{
