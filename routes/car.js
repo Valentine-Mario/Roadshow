@@ -23,4 +23,5 @@ router.get('/delete/:id', carController.deleteCar)
 router.get('/get', carController.getCars)
 router.get('/get/:id', carController.getCar)
 router.get('/search/:value', carController.searchCar)
+router.get('/sort', carController.sortCar)
 module.exports = router;

@@ -225,3 +225,20 @@ exports.searchCar=(req, res)=>{
         console.log(e)
     }
 }
+
+exports.sortCar=(req, res)=>{
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 10,
+        sort:{'price':1}
+    }
+    try{
+        carModel.paginate({}, options, (err, value)=>{
+            if(err)res.json({code:"01", message:"error getting cars"})
+            res.json({code:"00", messaeg:value})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
