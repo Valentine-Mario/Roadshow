@@ -46,3 +46,54 @@ exports.editImg=(req, res)=>{
           console.log(e)
       }
 }
+
+exports.editName=(req, res)=>{
+    var data={
+        name:req.body.name
+    }
+    var id={_id:req.params.id}
+
+    try{
+        airModel.findByIdAndUpdate(id, data, (err)=>{
+            if(err)res.json({code:"01", message:"error editing name"})
+            res.json({code:"00", message:"airline name modified successfully"})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.delete=(req, res)=>{
+    var id={_id:req.params.id}
+    try{
+        airModel.findByIdAndDelete(id, (err)=>{
+            if(err)res.json({code:"01", message:"error delting item"})
+            res.json({code:"00", message:"item deleted successfully"})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.getId=(req, res)=>{
+    var id={_id:req.params.id}
+    try{
+        airModel.findById(id, (err, airline)=>{
+            if(err)res.json({code:"01", message:"error getting airline"})
+            res.json({code:"00", message:airline})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.get=(req, res)=>{
+    try{
+        airModel.find({}, (err, airline)=>{
+            if(err)res.json({code:"01", message:"error getting details"})
+            res.json({code:"00", message:airline})
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
