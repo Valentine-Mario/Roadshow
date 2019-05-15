@@ -35,3 +35,23 @@ cloudinary.config({
           console.log(e)
       }
   }
+
+  exports.editImg=(req, res)=>{
+    var id={_id:req.params.id}
+    data={
+        image:req.files[0].path
+      }
+      try{
+        cloudinary.uploader.upload(data.image, function(result_pass){
+        }, {resource_type:"image"}).then((result)=>{
+            data.image=result.secure_url
+
+            carModel.findByIdAndUpdate(id, data, (err)=>{
+                if(err)res.json({code:"01", message:"error updating  picture"})
+                res.json({code:"00", message:"picture updated successfully"});
+            })
+        })
+      }catch(e){
+          console.log(e)
+      }
+}

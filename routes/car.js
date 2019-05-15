@@ -13,5 +13,6 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 router.post('/add', upload.any('image'), carController.addCar)
+router.post('/editimg/:id', upload.any('image'), carController.editImg)
 
 module.exports = router;
