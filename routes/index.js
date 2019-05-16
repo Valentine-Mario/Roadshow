@@ -4,7 +4,7 @@ const bookingController=require('../controller/bookings');
 const verification= require('../controller/verification')
 
 
-router.post('/add', verification.verifyToken, bookingController.addBooking)
+router.post('/addhoteluser/:id', verification.verifyToken, bookingController.addHotelBooking)
 router.post('/remove', verification.verifyToken, bookingController.removeBooking)
 
 module.exports = router;

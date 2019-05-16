@@ -1,22 +1,41 @@
 const userModel=require('../models/user')
+const bookingModel=require('../models/booking')
+const carModel=require('../models/cars')
+const flightModel=require('../models/flight')
+const hotelModel=require('../models/hotels')
+const roomModel=require('../models/rooms')
+const venueModel=require('../models/venues')
 const jwt=require('jsonwebtoken')
 
-
-exports.addBooking=(req, res)=>{
+exports.addHotelBooking=(req, res)=>{
     var data={
-        date:req.body.date,
-        description:req.body.description,
-        price:req.body.price
+        type:'Hotel Room Booking',
+        details:``,
+        start_date:req.body.start_date,
+        end_date:req.body.end_date
     }
+    var id={_id:req.params.id}
     try{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
-                if(user.verified==false){
-                    res.json({code:"01", message:"please verify account before you add bookings"})
+                if(err){
+                    res.json({code:"01", message:"error getting user information"})
                 }else{
-                   user.activity.push(data)
-                   user.save()
-                   res.json({code:"00", message:"bookings added successfully"})
+                    hotelModel.find({rooms:id._id}, (err, hotel)=>{
+                        
+                        roomModel.findById(id, (err, room)=>{
+                            data.details=`Your booking at ${hotel[0].name} at ${hotel[0].location} in room type ${room.type} at the price of ${room.price} has been booked.`
+                            bookingModel.create(data, (err, booking)=>{
+                                if(err){
+                                    res.json({code:"01", message:"error creating booking"})
+                                }else{
+                                    user.activity.push(booking);
+                                    user.save();
+                                    res.json({code:"00", message:"booking created successfully"})
+                                }
+                            })
+                        })
+                    })
                 }
             })
         })
@@ -24,6 +43,7 @@ exports.addBooking=(req, res)=>{
         console.log(e)
     }
 }
+
 
 exports.removeBooking=(req, res)=>{
     var index=req.body.index
