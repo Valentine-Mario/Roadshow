@@ -143,6 +143,76 @@ exports.addVenueBooking=(req, res)=>{
         console.log(e)
     }
 }
+
+exports.addVenueBooking_nonUser=(req, res)=>{
+    var data={
+        type:'Venue Rental',
+        details:``,
+        start_date:req.body.start_date,
+        end_date:req.body.end_date
+    }
+    var id={_id:req.params.id}
+    try{
+                venueModel.findById(id, (err, venue)=>{
+                    data.details=`Your venue ${venue.name} at ${venue.location} at the price of ${venue.pricing} has been booked`
+                    bookingModel.create(data, (err, booking)=>{
+                        res.json({code:"00", message:"booking created successfully"})
+                    })
+                })
+       
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.addFlight=(req, res)=>{
+    var data={
+        type:'Flight Booking',
+        details:``,
+        start_date:``,
+        end_date:``
+    }
+    var id={_id:req.params.id}
+    try{
+        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
+            userModel.findById(decoded_user.user, (err, user)=>{
+                flightModel.findById(id, (err, flight)=>{
+                    data.details=`Your flight from  ${flight.destination_from} to ${flight.destination_to} at the price of ${flight.price} has been booked`
+                    data.start_date=flight.departure_date
+                    data.end_date=flight.arrival_date
+                    bookingModel.create(data, (err, booking)=>{
+                        user.activity.push(booking);
+                        user.save();
+                        res.json({code:"00", message:"booking created successfully"})
+                    })
+                })
+            })
+        }) 
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.addFlight_nonUser=(req, res)=>{
+    var data={
+        type:'Flight Booking',
+        details:``,
+        start_date:``,
+        end_date:``
+    }
+    try{
+                flightModel.findById(id, (err, flight)=>{
+                    data.details=`Your flight from  ${flight.destination_from} to ${flight.destination_to} at the price of ${flight.price} has been booked`
+                    data.start_date=flight.departure_date
+                    data.end_date=flight.arrival_date
+                    bookingModel.create(data, (err, booking)=>{
+                        res.json({code:"00", message:"booking created successfully"})
+                    })
+                })
+    }catch(e){
+        console.log(e)
+    }
+}
 exports.removeBooking=(req, res)=>{
     var index=req.body.index
     try{
