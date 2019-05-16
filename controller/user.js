@@ -275,16 +275,20 @@ exports.requestPdf=(req, res)=>{
                                 res.json({code:"01", message:"error creating pdf. Try again"})
                             }else{
                                 var options = { format: 'Letter' };
-                        var str=`<div style="padding-left:10px; padding-right:10px;"> 
-                        <img src="https://res.cloudinary.com/rchain/image/upload/v1556621544/roadshow.png" height="200" width="200" style="border-radius:50%;">
+                        var str=`<div style="width:100%;">
+                        <div style="width:30%; float:left;">
+                            <img width='200' height='200' src="https://res.cloudinary.com/rchain/image/upload/v1556621544/roadshow.png">
                         </div>
-                        <br/>
-                        <div style="font-size:18px; align="center">
-                          ${user.name} booking details </div>
-                          <hr/>
-                          <ol style="padding-top:10px;">`
+                        <div style="width:70%; font-family:Comic Sans MS, cursive, sans-serif; float:left;">
+                            <h2 style="padding-top: 50px;">Your Roadshow Booking Details</h2>
+                            <br/>
+                            <p style="padding-top: 10px; font-size: 18px;">Dear ${user.name}, below is the details of your bookings on Roadshow</p>
+                        </div>
+                        <hr/>
+                    </div>
+                          <ol style="padding-top:30px;">`
                         for(a of user.activity){
-                            str += '<li style="font-size:15px;"> description:'+ a.description + '<br/> date:'+ a.date + '<br/> price'+ a.price+ '</li> <hr/>';
+                            str += '<li> <b>Type</b>:'+ a.type + '<br/><br/> <b>Details</b>:'+ a.details + '<br/><br/> <b>Start date</b>:'+ a.start_date+ '<br/><br/> <b>End date</b>:'+ a.end_date+ '</li> <hr/>';
 
                         }
                         str += '</ol">';
@@ -293,20 +297,25 @@ exports.requestPdf=(req, res)=>{
                             if(err){
                                 res.json({code:"01", err:err, message:"error writing to pdf"})
                             }else{
-                                cloudinary.uploader.upload(`./files/${user._id}.pdf`, (pdf_details)=>{
+                                // cloudinary.uploader.upload(`./files/${user._id}.pdf`, (pdf_details)=>{
 
-                                }, {resource_type:"auto"}).then((user_pdf)=>{
-                                    user_link=user_pdf.secure_url
+                                // }, {resource_type:"auto"}).then((user_pdf)=>{
+                                //     user_link=user_pdf.secure_url
                                     var mailOption={
                                         from:`Road Show`,
                                         to:user.email,
                                         subject:`Booking details in PDF`,
+                                        attachments:[
+                                            {   
+                                                filename:`${user._id}.pdf`,
+                                                path:`./files/${user._id}.pdf`
+                                            },
+                                        ],
                                         html:`
                                        <div>
-                                       Below is a link that contains your booking activities
+                                       Attached to this mail is a copy of your bookings on nodemailer
                                        </div>
                                        <br/>
-                                       <a href="${user_link}">pdf file</a>
                                         `
                                     };
                                     transporter.sendMail(mailOption, function(err, info){
@@ -319,7 +328,7 @@ exports.requestPdf=(req, res)=>{
                                             return true;
                                         }
                                     })
-                                })
+                                // })
                             }
                           })
                             }
