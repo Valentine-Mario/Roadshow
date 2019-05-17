@@ -307,13 +307,13 @@ exports.requestPdf=(req, res)=>{
                                         subject:`Booking details in PDF`,
                                         attachments:[
                                             {   
-                                                filename:`${user._id}.pdf`,
+                                                filename:`${user.name}.pdf`,
                                                 path:`./files/${user._id}.pdf`
                                             },
                                         ],
                                         html:`
                                        <div>
-                                       Attached to this mail is a copy of your bookings on nodemailer
+                                       Attached to this mail is a copy of your bookings on roadshow
                                        </div>
                                        <br/>
                                         `
