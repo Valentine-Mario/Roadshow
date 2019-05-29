@@ -243,7 +243,7 @@ exports.getHotels=(req, res)=>{
 try{
     hotelModel.paginate({}, options, (err, hotel)=>{
         if(err)res.json({code:"01", messaeg:"error geting hotels"})
-        res.json({code:"00", messaeg:hotel})
+        res.json({code:"00", message:hotel})
     })
 }catch(e){
     console.log(e)
@@ -255,7 +255,7 @@ exports.getHotelId= (req, res)=>{
     try{
         hotelModel.findById(id, (err, hotel)=>{
             if(err)res.json({code:"01", err:err, message:"error getting details"})
-            res.json({code:"00", messaeg:hotel})
+            res.json({code:"00", message:hotel})
         }).populate({
             path:'rooms'
         })
@@ -275,7 +275,7 @@ exports.searchHotel=(req, res)=>{
     try{
         hotelModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"description":{$regex: value, $options: 'gi'}}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, hotel)=>{
             if(err)res.json({code:"01", messaeg:"error returning hotels"})
-            res.json({code:"00", messaeg:hotel})
+            res.json({code:"00", message:hotel})
         })
     }catch(e){
         console.log(e)

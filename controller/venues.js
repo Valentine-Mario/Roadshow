@@ -222,8 +222,8 @@ exports.searchVenue=(req, res)=>{
 }
     try{
         venueModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"pricing":{$regex: value, $options: 'gi'}}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, venue)=>{
-            if(err)res.json({code:"01", messaeg:"error returning venue"})
-            res.json({code:"00", messaeg:venue})
+            if(err)res.json({code:"01", message:"error returning venue"})
+            res.json({code:"00", message:venue})
         })
     }catch(e){
         console.log(e)

@@ -24,8 +24,12 @@ exports.addGoogleUser=(req, res)=>{
     try{
         var user=req.user._id
     jwt.sign({user}, "golden_little_kids", (err, user_token)=>{
-        if(err)res.json({code:"00", err:err, message:"error creating user token, try again"})
-        res.json({code:"00", message:user_token})
+       var responseHTML = '<html><head><title>Main</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");window.close(); </script></html>'
+    responseHTML = responseHTML.replace('%value%', JSON.stringify({
+        code:"00",
+        user: user_token
+    }));
+    res.status(200).send(responseHTML);
     })
     }catch(e){
         console.log(e)

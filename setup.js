@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy({
    
         User.findOne({auth_id: profile.id}, (err, user_value)=>{
             if(user_value!==null){
-                console.log("log in successful")
+                
                 done(null, user_value._id)
             }else{
                 data={
