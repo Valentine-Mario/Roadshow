@@ -16,7 +16,7 @@ exports.addReview=(req, res)=>{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             data.user=decoded_user.user
             data.car=id
-            if(parseInt(data.rating)>5||parseInt(data.rating)<1){
+            if(parseInt(data.rating)>10||parseInt(data.rating)<1){
                 res.json({code:"01", message:"please enter a valid rating"})
             }else{
                 reviewModel.create(data, (err, review)=>{

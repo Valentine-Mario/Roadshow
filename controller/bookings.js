@@ -132,9 +132,14 @@ exports.addVenueBooking=(req, res)=>{
                 venueModel.findById(id, (err, venue)=>{
                     data.details=`Your venue ${venue.name} at ${venue.location} at the price of ${venue.pricing} has been booked`
                     bookingModel.create(data, (err, booking)=>{
-                        user.activity.push(booking);
+                        if(err){
+                            res.json({err:err})
+                        }else{
+                            user.activity.push(booking);
                         user.save();
                         res.json({code:"00", message:"booking created successfully"})
+                        }
+                        
                     })
                 })
             })
