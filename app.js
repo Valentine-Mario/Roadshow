@@ -41,10 +41,10 @@ app.use(function(req, res, next) {
   
   });
 
-var url='mongodb://localhost:27017/road-show'
-
+//var url='mongodb://localhost:27017/road-show'
+var url='mongodb+srv://place:place-locate@roadshow-jhhwo.mongodb.net/test?retryWrites=true&w=majority'
 mongoose.Promise= global.Promise;
-mongoose.connect(url, { useNewUrlParser: true });
+mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
 
 
 app.use('/flight', flightRouter)
