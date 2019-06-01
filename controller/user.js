@@ -63,7 +63,7 @@ exports.addUser=(req, res)=>{
                                                 <div>
                                                 Welcome to Job miner, click on the link below to verify account
                                                 <br/>
-                                                <a href="base_url/user/approve/${user_details._id}">click</a>
+                                                <a href="https://rocky-mesa-69765.herokuapp.com/user/approve/${user_details._id}">click</a>
                                                 </div>
                                                 `
                                 }
