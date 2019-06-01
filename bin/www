@@ -41,6 +41,7 @@ if (cluster.isMaster) {
   const options = {
     key: fs.readFileSync( './cert/key.pem' ),
     cert: fs.readFileSync( './cert/certificate.pem' ),
+    timeout: 150000
     
      };
 
