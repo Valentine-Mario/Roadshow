@@ -96,6 +96,52 @@ class Receipts{
             console.log(e)
         }
     }
+
+    removeImageFromReceipt(req, res){
+        var id={_id:req.params.id}
+        var data={
+             images:req.body.images
+        }
+      try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            receiptModel.findById(id, (err, receipt)=>{
+                if(JSON.stringify(receipt.user)!== JSON.stringify(decoded_user.user)){
+                    res.status(503).json({code:"01", message:"unauthorised to edit details"})
+                }else{
+                    if(receipt.images.includes(data.images)){
+                        var index= receipt.images.indexOf(data.images)
+                        receipt.images.splice(index, 1)
+                        receipt.save()
+                        res.json({code:"00", message:"image successfully removed"})
+                        }else{
+                            res.json({code:"01", message:"image not found"})
+                        }
+                }
+            })
+        })
+      }catch(e){
+          console.log(e)
+      }
+    }
+    removeReceipt(req, res){
+        var id={_id:req.params.id}
+        try{
+            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+                receiptModel.findById(id, (err, receipt)=>{
+                    if(JSON.stringify(receipt.user)!== JSON.stringify(decoded_user.user)){
+                        res.status(503).json({code:"01", message:"unauthorised to delete details"})
+                    }else{
+                        receiptModel.findByIdAndDelete(id, (err)=>{
+                            if(err)res.status(503).json({code:"01", message:"error deleting details"})
+                            res.status(200).json({code:"00", message:"details deleted successfully"})
+                        })
+                    }
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
 }
 
 module.exports=new Receipts();
