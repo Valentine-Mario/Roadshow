@@ -8,6 +8,7 @@ var schema= new mongoose.Schema({
     auth_id:String,
     verified:{type:Boolean, default:false},
     date_created:Date,
+    receipts:[],
     access:{type:Number, default:0}
 })
 schema.plugin(mongoosePaginate);

@@ -18,6 +18,7 @@ var carRouter=require('./routes/car')
 var carreviewRouter=require('./routes/car-review')
 var airlineRouter=require('./routes/airline')
 var flightRouter=require('./routes/flight')
+var receiptRouter=require('./routes/receipts')
 var googleSetUp= require('./setup')
 require('dotenv').config()
 var app = express();
@@ -41,12 +42,13 @@ app.use(function(req, res, next) {
   
   });
 
-//var url='mongodb://localhost:27017/road-show'
-var url='mongodb+srv://place:place-locate@roadshow-jhhwo.mongodb.net/test?retryWrites=true&w=majority'
+var url='mongodb://localhost:27017/road-show'
+//var url='mongodb+srv://place:place-locate@roadshow-jhhwo.mongodb.net/test?retryWrites=true&w=majority'
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
 
 
+app.use('/receipt', receiptRouter)
 app.use('/flight', flightRouter)
 app.use('/airline', airlineRouter)
 app.use('/carreview', carreviewRouter)

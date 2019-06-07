@@ -14,7 +14,7 @@ var fs=require('fs')
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '5000');
+var port = normalizePort(process.env.PORT || '7000');
 app.set('port', port);
 
 if (cluster.isMaster) {
@@ -52,7 +52,7 @@ if (cluster.isMaster) {
    */
 
   server.listen(port, function(){
-    console.log(`listening on port 5000`)
+    console.log(`listening on port 7000`)
   });
   server.on('error', onError);
   server.on('listening', onListening);

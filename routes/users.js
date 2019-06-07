@@ -20,4 +20,5 @@ router.get('/delete', verification.verifyToken, userController.deleteAccount)
 router.post('/notify', userController.notifyUsers)
 router.get('/request', verification.verifyToken, userController.requestPdf)
 
+
 module.exports = router;

@@ -231,6 +231,7 @@ exports.login=(req, res)=>{
     }
   }
 
+
   exports.notifyUsers=(req, res)=>{
     var data={
         header:req.body.header,
