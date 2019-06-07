@@ -18,5 +18,6 @@ router.post('/addimages/:id', upload.any('images'), verification.verifyToken, re
 router.post('/edit/:id', verification.verifyToken, receiptController.editReceiptDetails)
 router.post('/removeimage/:id', verification.verifyToken, receiptController.removeImageFromReceipt)
 router.get('/delete', verification.verifyToken, receiptController.removeReceipt)
+router.get('/get', verification.verifyToken, receiptController.getReceipt)
 
 module.exports = router;

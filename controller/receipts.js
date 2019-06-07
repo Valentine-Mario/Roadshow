@@ -142,6 +142,25 @@ class Receipts{
             console.log(e)
         }
     }
+    getReceipt(req, res){
+        var {page, limit,}= req.query;
+        var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 10,
+        sort:{'_id':-1}
+}
+        try{
+            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+                receiptModel.paginate({user:decoded_user.user}, options, (err, receipt)=>{
+                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+        
+    }
 }
 
 module.exports=new Receipts();
