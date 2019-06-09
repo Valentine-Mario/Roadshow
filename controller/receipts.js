@@ -30,7 +30,7 @@ class Receipts{
                             data.user=decoded_user.user
                             receiptModel.create(data, (err, receipt)=>{
                                 if(err)res.status(503).json({err:err, message:"error adding recepits"})
-                                res.status(200).json({code:"00", message:"receipt created successfully"})
+                                res.status(200).json({code:"00", message:receipt})
                             })
                         }
                     })
@@ -160,6 +160,17 @@ class Receipts{
             console.log(e)
         }
         
+    }
+    getReceiptById(req, res){
+        var id={_id:req.params.id}
+        try{
+            receiptModel.findById(id, (err, receipt)=>{
+                if(err)res.status(503).json({code:"01", message:"error getting receipt"})
+                res.status(200).json({code:"00", message:receipt})
+            })
+        }catch(e){
+            console.log(e)
+        }
     }
 }
 

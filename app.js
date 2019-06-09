@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -19,10 +17,13 @@ var carreviewRouter=require('./routes/car-review')
 var airlineRouter=require('./routes/airline')
 var flightRouter=require('./routes/flight')
 var receiptRouter=require('./routes/receipts')
+var bodyParser = require('body-parser')
+
 var googleSetUp= require('./setup')
 require('dotenv').config()
 var app = express();
-
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb"}));
 app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
