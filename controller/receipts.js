@@ -13,7 +13,7 @@ class Receipts{
         var data={
             images:req.files,
             location:req.body.location,
-            date:Date.now(),
+            date:'',
             user:''  
         }
         var img=[]
@@ -28,6 +28,12 @@ class Receipts{
                         data.images=img;
                         if(count==data.images.length){
                             data.user=decoded_user.user
+                            var today_date=new Date();
+                            var day=today_date.getDate();
+                            var month=today_date.getMonth() +1;
+                            var year=today_date.getFullYear();
+                            data.date=day + '-' + month + '-' + year;
+                            
                             receiptModel.create(data, (err, receipt)=>{
                                 if(err)res.status(503).json({err:err, message:"error adding recepits"})
                                 res.status(200).json({code:"00", message:receipt})
@@ -167,6 +173,19 @@ class Receipts{
             receiptModel.findById(id, (err, receipt)=>{
                 if(err)res.status(503).json({code:"01", message:"error getting receipt"})
                 res.status(200).json({code:"00", message:receipt})
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
+    getRceiptByDay(req, res){
+        var dateValue=req.body.date
+        try{
+            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+                receiptModel.find({$and:[{user:decoded_user.user}, {date:dateValue}]}, (err, receipt)=>{
+                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
             })
         }catch(e){
             console.log(e)
