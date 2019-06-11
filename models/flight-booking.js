@@ -4,7 +4,9 @@ var schema= new mongoose.Schema({
    type:String,
    airline:String,
    flight_id:{type:mongoose.Schema.Types.ObjectId, ref:'flight'}, 
-   user:String  
+   user:String,
+   no_of_people:String,
+   price:String 
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('flight-bookings', schema);

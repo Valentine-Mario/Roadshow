@@ -10,8 +10,8 @@ router.post('/addcaruser/:id', verification.verifyToken, bookingController.addCa
 router.post('/addcarnonuser/:id', bookingController.addCarBooking_nonUser)
 router.post('/addvenueuser/:id', verification.verifyToken, bookingController.addVenueBooking)
 router.post('/addvenuenonuser/:id', bookingController.addVenueBooking_nonUser)
-router.get('/addflightuser/:id', verification.verifyToken, bookingController.addFlight)
-router.get('/addflightnonuser/:id', bookingController.addFlight_nonUser)
+router.post('/addflightuser/:id', verification.verifyToken, bookingController.addFlight)
+router.post('/addflightnonuser/:id', bookingController.addFlight_nonUser)
 router.post('/remove', verification.verifyToken, bookingController.removeBooking)
 
 module.exports = router;

@@ -6,8 +6,9 @@ var schema= new mongoose.Schema({
    end_date:Date,
    duration:Number,
    car_id:{type:mongoose.Schema.Types.ObjectId, ref:'cars'},
-   user:String
-  
+   user:String,
+   price:String,
+   quantity:String
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('car-bookings', schema);

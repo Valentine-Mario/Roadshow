@@ -6,7 +6,8 @@ var schema= new mongoose.Schema({
    end_date:Date,
    duration:Number,
    venue_id:{type:mongoose.Schema.Types.ObjectId, ref:'venues'},
-   user:String
+   user:String,
+   price:String
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('venue-bookings', schema);

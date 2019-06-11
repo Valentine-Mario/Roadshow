@@ -8,7 +8,8 @@ var schema= new mongoose.Schema({
    hotel_id:{type:mongoose.Schema.Types.ObjectId, ref:'hotels'},
    price:String,
    roomType:String,
-   user:String
+   user:String,
+   no_of_rooms:String,
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('hotel-bookings', schema);
