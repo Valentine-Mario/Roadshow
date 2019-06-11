@@ -213,17 +213,25 @@ exports.addVenueBooking=(req, res)=>{
 
 exports.addVenueBooking_nonUser=(req, res)=>{
     var data={
-        type:'Venue Rental',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Venue',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        venue_id:'',
+        user:null
     }
     var id={_id:req.params.id}
     try{
                 venueModel.findById(id, (err, venue)=>{
-                    data.details=`Your venue ${venue.name} at ${venue.location} at the price of ${venue.pricing} has been booked`
-                    bookingModel.create(data, (err, booking)=>{
-                        res.json({code:"00", message:"booking created successfully"})
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                    data.venue_id=venue._id;
+                    data.user=user._id
+                    venueBookingModel.create(data, (err, venueBooking)=>{
+                        if(err){
+                            res.status(401).json({code:"01", err:err, message:"error creating booking"})
+                        }else{
+                            res.status(200).json({code:"00", message:"venue booking created successfully"})
+                        }
                     })
                 })
        
