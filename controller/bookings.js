@@ -6,13 +6,20 @@ const hotelModel=require('../models/hotels')
 const roomModel=require('../models/rooms')
 const venueModel=require('../models/venues')
 const jwt=require('jsonwebtoken')
-
+const flightBookingModel=require('../models/flight-booking')
+const HotelBookingModel=require('../models/hotel-booking')
+const carBookingModel=require('../models/car-booking')
+const venueBookingModel=require('../models/venue-booking')
 exports.addHotelBooking=(req, res)=>{
     var data={
-        type:'Hotel Room Booking',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Hotel',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        hotel_id:'',
+        price:'',
+        roomType:'',
+        user:''
     }
     var id={_id:req.params.id}
     try{
@@ -24,14 +31,27 @@ exports.addHotelBooking=(req, res)=>{
                     hotelModel.find({rooms:id._id}, (err, hotel)=>{
                         
                         roomModel.findById(id, (err, room)=>{
-                            data.details=`Your booking at ${hotel[0].name} at ${hotel[0].location} in room type ${room.type} at the price of ${room.price} has been booked.`
-                            bookingModel.create(data, (err, booking)=>{
+                            data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                            
+                            var obj={
+                                name:'Hotel',
+                                details:`Hotel at ${hotel[0].name} located at ${hotel[0].location}, 
+                                price is ${room.price} duration is ${data.duration} in days
+                                room type is ${room.type}`,
+                                start_date:data.start_date,
+                                end_date:data.end_date 
+                            }
+                            data.hotel_id=hotel[0]._id;
+                            data.price=room.price;
+                            data.roomType=room.type
+                            data.user=user._id
+                            HotelBookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.json({code:"01", message:"error creating booking"})
+                                    res.status(401).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
-                                    user.activity.push(booking);
+                                    user.activity.push(obj);
                                     user.save();
-                                    res.json({code:"00", message:"booking created successfully"})
+                                    res.status(200).json({code:"00", message:"hotel booking created successfully"})
                                 }
                             })
                         })
@@ -46,22 +66,31 @@ exports.addHotelBooking=(req, res)=>{
 
 exports.addHotelBooking_nonUser=(req, res)=>{
     var data={
-        type:'Hotel Room Booking',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Hotel',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        hotel_id:'',
+        price:'',
+        roomType:'',
+        user:null
     }
     var id={_id:req.params.id}
     try{
                     hotelModel.find({rooms:id._id}, (err, hotel)=>{
                         
                         roomModel.findById(id, (err, room)=>{
-                            data.details=`Your booking at ${hotel[0].name} at ${hotel[0].location} in room type ${room.type} at the price of ${room.price} has been booked.`
-                            bookingModel.create(data, (err, booking)=>{
+                            data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                            data.hotel_id=hotel[0]._id;
+                            data.price=room.price;
+                            data.roomType=room.type
+                            data.user=user._id
+                            HotelBookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.json({code:"01", message:"error creating booking"})
+                                    res.status(401).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
-                                    res.json({code:"00", message:"booking created successfully"})
+                                    
+                                    res.status(200).json({code:"00", message:"hotel booking created successfully"})
                                 }
                             })
                         })
@@ -73,21 +102,36 @@ exports.addHotelBooking_nonUser=(req, res)=>{
 
 exports.addCarBooking=(req, res)=>{
     var data={
-        type:'Car Rental Booking',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Car',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        car_id:'',
+        user:''
     }
     var id={_id:req.params.id}
     try{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
                 carModel.findById(id, (err, car)=>{
-                    data.details=`Your car rental of ${car.name} from ${car.supplier_location} at the price of ${car.price} has been booked`
-                    bookingModel.create(data, (err, booking)=>{
-                        user.activity.push(booking);
-                        user.save();
-                        res.json({code:"00", message:"booking created successfully"})
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                    var obj={
+                        name:'Car',
+                        details:`Car rental of ${car.name} at ${car.supplier_location}
+                        for the price of ${car.price} for the duration of ${data.duration} in days`,
+                        start_date:data.start_date,
+                        end_date:data.end_date 
+                    }
+                    data.car_id=car._id;
+                    data.user=user._id;
+                    carBookingModel.create(data, (err, carBooking)=>{
+                        if(err){
+                            res.status(401).json({code:"01", err:err, message:"error creating booking"})
+                        }else{
+                            user.activity.push(obj);
+                            user.save();
+                            res.status(200).json({code:"00", message:"car booking created successfully"})
+                        }
                     })
                 })
             })
@@ -99,17 +143,24 @@ exports.addCarBooking=(req, res)=>{
 
 exports.addCarBooking_nonUser=(req, res)=>{
     var data={
-        type:'Car Rental Booking',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Car',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        car_id:'',
+        user:null
     }
     var id={_id:req.params.id}
     try{
                 carModel.findById(id, (err, car)=>{
-                    data.details=`Your car rental of ${car.name} from ${car.supplier_location} at the price of ${car.price} has been booked`
-                    bookingModel.create(data, (err, booking)=>{
-                        res.json({code:"00", message:"booking created successfully"})
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                    data.car_id=car._id;
+                    carBookingModel.create(data, (err, carBooking)=>{
+                        if(err){
+                            res.status(401).json({code:"01", err:err, message:"error creating booking"})
+                        }else{
+                            res.status(200).json({code:"00", message:"car booking created successfully"})
+                        }
                     })
                 })
     }catch(e){
@@ -120,26 +171,37 @@ exports.addCarBooking_nonUser=(req, res)=>{
 
 exports.addVenueBooking=(req, res)=>{
     var data={
-        type:'Venue Rental',
-        details:``,
-        start_date:req.body.start_date,
-        end_date:req.body.end_date
+        type:'Venue',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        venue_id:'',
+        user:''
     }
     var id={_id:req.params.id}
     try{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
                 venueModel.findById(id, (err, venue)=>{
-                    data.details=`Your venue ${venue.name} at ${venue.location} at the price of ${venue.pricing} has been booked`
-                    bookingModel.create(data, (err, booking)=>{
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))
+                    data.venue_id=venue._id;
+                    data.user=user._id
+                    var obj={
+                        name:'Venue',
+                        details:`Venue rental at ${venue.name} at ${venue.location}
+                        with ${venue.capacity} capacity, at the price of 
+                        ${venue.pricing} for the duration of ${data.duration} in days`,
+                        start_date:data.start_date,
+                        end_date:data.end_date 
+                    }
+                    venueBookingModel.create(data, (err, venueBooking)=>{
                         if(err){
-                            res.json({err:err})
+                            res.status(401).json({code:"01", err:err, message:"error creating booking"})
                         }else{
-                            user.activity.push(booking);
-                        user.save();
-                        res.json({code:"00", message:"booking created successfully"})
+                            user.activity.push(obj);
+                            user.save();
+                            res.status(200).json({code:"00", message:"venue booking created successfully"})
                         }
-                        
                     })
                 })
             })
@@ -172,25 +234,37 @@ exports.addVenueBooking_nonUser=(req, res)=>{
 
 exports.addFlight=(req, res)=>{
     var data={
-        type:'Flight Booking',
-        details:``,
-        start_date:``,
-        end_date:``
+        type:'Flight',
+        flight_id:'',
+        user:'',
     }
     var id={_id:req.params.id}
     try{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
                 flightModel.findById(id, (err, flight)=>{
-                    data.details=`Your flight from  ${flight.destination_from} to ${flight.destination_to} at the price of ${flight.price} has been booked`
-                    data.start_date=flight.departure_date
-                    data.end_date=flight.arrival_date
-                    bookingModel.create(data, (err, booking)=>{
-                        user.activity.push(booking);
-                        user.save();
-                        res.json({code:"00", message:"booking created successfully"})
-                    })
-                })
+                    var obj={
+                        name:'Flight',
+                        details:`Flight from ${flight.destination_from} to ${flight.destination_to},
+                        departure airport is ${flight.departure_airport} and arrival airport 
+                        is ${flight.arrival_airport}. Price is ${flight.price}, airline is ${flight.airline.name}`,
+                        start_date:flight.departure_date,
+                        end_date:flight.arrival_date
+                    }
+
+                    data.flight_id=flight._id,
+                    data.user=user._id
+                    flightBookingModel.create(data, (err, flightBooking)=>{
+                        if(err){
+                            res.status(401).json({code:"01", message:"error creating booking"})
+                        }else{
+                            user.activity.push(obj);
+                            user.save();
+                            res.status(200).json({code:"00", message:"flight booking created successfully"})
+                        }
+                        })
+                    
+                }).populate('airline')
             })
         }) 
     }catch(e){
@@ -200,18 +274,16 @@ exports.addFlight=(req, res)=>{
 
 exports.addFlight_nonUser=(req, res)=>{
     var data={
-        type:'Flight Booking',
-        details:``,
-        start_date:``,
-        end_date:``
+        type:'Flight',
+        flight_id:'',
+        user:null,
     }
     try{
                 flightModel.findById(id, (err, flight)=>{
-                    data.details=`Your flight from  ${flight.destination_from} to ${flight.destination_to} at the price of ${flight.price} has been booked`
-                    data.start_date=flight.departure_date
-                    data.end_date=flight.arrival_date
-                    bookingModel.create(data, (err, booking)=>{
-                        res.json({code:"00", message:"booking created successfully"})
+                    data.flight_id=flight._id,
+                    flightBookingModel.create(data, (err, flightBooking)=>{
+                        if(err)res.status(401).json({code:"01", message:"error creating booking"})
+                        res.status(200).json({code:"00", message:"flight booking created successfully"})
                     })
                 })
     }catch(e){

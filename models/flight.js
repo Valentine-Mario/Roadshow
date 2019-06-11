@@ -9,7 +9,9 @@ var schema= new mongoose.Schema({
     arrival_time:String,
     airline:{type:mongoose.Schema.Types.ObjectId, ref:'airline'},
     class:String,
-    price:String
+    price:String,
+    departure_airport:String,
+    arrival_airport:String,
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('flight', schema);

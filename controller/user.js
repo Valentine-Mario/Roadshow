@@ -346,3 +346,135 @@ exports.requestPdf=(req, res)=>{
         console.log(e)
     }
 }
+
+exports.setHotel=(req, res)=>{
+    var data={
+        hotel_price_spec:req.body.hotel_price_spec,
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+
+
+}
+
+exports.resetHotel=(req, res)=>{
+    var data={
+        hotel_price_spec:0,
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.setVenue=(req, res)=>{
+    var data={
+        venue_price_spec:req.body.venue_price_spec
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.resetVenue=(req, res)=>{
+    var data={
+        venue_price_spec:0
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.setCar=(req, res)=>{
+    var data={
+        car_price_spec:req.body.car_price_spec
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.resetCar=(req, res)=>{
+    var data={
+        car_price_spec:0
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.setFlight=(req, res)=>{
+    var data={
+    fligh_price_perk:req.body.fligh_price_perk,
+    flight_type_spec:req.body.flight_type_spec
+    }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.resetFlight=(req, res)=>{
+    var data={
+        fligh_price_perk:0,
+        flight_type_spec:undefined
+        }
+    try{
+        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                res.status(200).json({code:"00", message:"details modified successfully"})
+            })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
