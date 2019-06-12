@@ -7,7 +7,7 @@ var schema= new mongoose.Schema({
    duration:Number,
    car_id:{type:mongoose.Schema.Types.ObjectId, ref:'cars'},
    user:String,
-   price:String,
+   price:Number,
    quantity:String
 })
 schema.plugin(mongoosePaginate);

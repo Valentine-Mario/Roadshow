@@ -20,7 +20,7 @@ exports.addHotelBooking=(req, res)=>{
         price:'',
         roomType:'',
         user:'',
-        no_of_rooms:req.body.no_of_people,
+        no_of_rooms:req.body.no_of_rooms,
     }
     var id={_id:req.params.id}
     try{
@@ -33,12 +33,13 @@ exports.addHotelBooking=(req, res)=>{
                         
                         roomModel.findById(id, (err, room)=>{
                             data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
-                            data.price=parseInt(room.price)*data.duration*parseInt(data.no_of_rooms);
+                            var room_price=room.price.replace(/^\D+/g, '')
+                            data.price=parseInt(room_price)*data.duration*parseInt(data.no_of_rooms);
                             var obj={
                                 name:'Hotel',
                                 details:`Hotel at ${hotel[0].name} located at ${hotel[0].location}, 
                                 price is ${data.price} duration is ${data.duration} in days
-                                room type is ${room.type}`,
+                                room type is ${room.type} at the price of $ ${data.price}`,
                                 start_date:data.start_date,
                                 end_date:data.end_date 
                             }
@@ -75,7 +76,7 @@ exports.addHotelBooking_nonUser=(req, res)=>{
         price:'',
         roomType:'',
         user:null,
-        no_of_rooms:req.body.no_of_people,
+        no_of_rooms:req.body.no_of_rooms,
     }
     var id={_id:req.params.id}
     try{
@@ -83,7 +84,8 @@ exports.addHotelBooking_nonUser=(req, res)=>{
                         
                         roomModel.findById(id, (err, room)=>{
                             data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
-                            data.price=parseInt(room.price)*data.duration*parseInt(data.no_of_rooms);
+                            var room_price=room.price.replace(/^\D+/g, '')
+                            data.price=parseInt(room_price)*data.duration*parseInt(data.no_of_rooms);
                             data.hotel_id=hotel[0]._id;
                             data.roomType=room.type
                             data.user=user._id
@@ -119,11 +121,13 @@ exports.addCarBooking=(req, res)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
                 carModel.findById(id, (err, car)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
-                    data.price=data.duration*parseInt(car.price)*parseInt(quantity) 
+                    var car_price=car.price.replace(/^\D+/g, '')
+                    data.price=data.duration * parseInt(car_price)*parseInt(data.quantity) 
+                    console.log(data.price)
                     var obj={
                         name:'Car',
                         details:`Car rental of ${car.name} at ${car.supplier_location}
-                        for the price of ${data.price} for ${data.quantity} quantity for the duration of ${data.duration} in days`,
+                        for the price of $ ${data.price} for ${data.quantity} quantity for the duration of ${data.duration} in days`,
                         start_date:data.start_date,
                         end_date:data.end_date 
                     }
@@ -161,7 +165,8 @@ exports.addCarBooking_nonUser=(req, res)=>{
     try{
                 carModel.findById(id, (err, car)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
-                    data.price=data.duration*parseInt(car.price)*parseInt(quantity) 
+                    var car_price=car.price.replace(/^\D+/g, '')
+                    data.price=data.duration*parseInt(car_price)*parseInt(data.quantity) 
                     data.car_id=car._id;
                     carBookingModel.create(data, (err, carBooking)=>{
                         if(err){
@@ -195,7 +200,8 @@ exports.addVenueBooking=(req, res)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
                     data.venue_id=venue._id;
                     data.user=user._id;
-                    data.price=parseInt(venue.pricing)*data.duration
+                    var venue_price=venue.pricing.replace(/^\D+/g, '')
+                    data.price=parseInt(venue_price)*data.duration
                     var obj={
                         name:'Venue',
                         details:`Venue rental at ${venue.name} at ${venue.location}
@@ -237,7 +243,8 @@ exports.addVenueBooking_nonUser=(req, res)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
                     data.venue_id=venue._id;
                     data.user=user._id
-                    data.price=parseInt(venue.pricing)*data.duration
+                    var venue_price=venue.pricing.replace(/^\D+/g, '')
+                    data.price=parseInt(venue_price)*data.duration
                     venueBookingModel.create(data, (err, venueBooking)=>{
                         if(err){
                             res.status(401).json({code:"01", err:err, message:"error creating booking"})
@@ -265,12 +272,13 @@ exports.addFlight=(req, res)=>{
         jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
             userModel.findById(decoded_user.user, (err, user)=>{
                 flightModel.findById(id, (err, flight)=>{
-                    data.price=parseInt(data.no_of_people)*parseInt(flight.price) 
+                    var flight_price=flight.price.replace(/^\D+/g, '')
+                    data.price=parseInt(data.no_of_people)*parseInt(flight_price) 
                     var obj={
                         name:'Flight',
                         details:`Flight from ${flight.destination_from} to ${flight.destination_to},
                         departure airport is ${flight.departure_airport} and arrival airport 
-                        is ${flight.arrival_airport}. Price is ${data.price} for
+                        is ${flight.arrival_airport}. Price is $ ${data.price} for
                         ${data.no_of_people} person(s), airline is ${flight.airline.name}`,
                         start_date:flight.departure_date,
                         end_date:flight.arrival_date
@@ -307,7 +315,8 @@ exports.addFlight_nonUser=(req, res)=>{
     try{
                 flightModel.findById(id, (err, flight)=>{
                     data.flight_id=flight._id
-                    data.price=parseInt(data.no_of_people)*parseInt(flight.price) 
+                    var flight_price=flight.price.replace(/^\D+/g, '')
+                    data.price=parseInt(data.no_of_people)*parseInt(flight_price) 
                     flightBookingModel.create(data, (err, flightBooking)=>{
                         if(err)res.status(401).json({code:"01", message:"error creating booking"})
                         res.status(200).json({code:"00", message:"flight booking created successfully"})
@@ -331,6 +340,30 @@ exports.removeBooking=(req, res)=>{
                     res.json({code:"01", message:"booking removed successfully"})
                 }
             })
+        })
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.getAllBookings=(req, res)=>{
+    try{
+        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
+            carBookingModel.find({user:decoded_user.user}, (err, carbooking)=>{
+                flightBookingModel.find({user:decoded_user.user}, (err, flightBooking)=>{
+                    HotelBookingModel.find({user:decoded_user.user}, (err, hotelBooking)=>{
+                        venueBookingModel.find({user:decoded_user.user}, (err, venueBooking)=>{
+                            res.status(200).json({code:"00", message:flightBooking.concat(carbooking, hotelBooking, venueBooking)})
+                    
+                        }).populate('venue_id')
+                    }).populate('hotel_id')
+                }).populate({
+                    path:'flight_id',
+                    populate:{
+                        path:'airline'
+                    }
+                })
+            }).populate('car_id')
         })
     }catch(e){
         console.log(e)

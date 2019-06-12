@@ -13,5 +13,6 @@ router.post('/addvenuenonuser/:id', bookingController.addVenueBooking_nonUser)
 router.post('/addflightuser/:id', verification.verifyToken, bookingController.addFlight)
 router.post('/addflightnonuser/:id', bookingController.addFlight_nonUser)
 router.post('/remove', verification.verifyToken, bookingController.removeBooking)
+router.get('/get', verification.verifyToken, bookingController.getAllBookings)
 
 module.exports = router;

@@ -6,10 +6,10 @@ var schema= new mongoose.Schema({
    end_date:Date,
    duration:Number,
    hotel_id:{type:mongoose.Schema.Types.ObjectId, ref:'hotels'},
-   price:String,
+   price:Number,
    roomType:String,
    user:String,
-   no_of_rooms:String,
+   no_of_rooms:Number,
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('hotel-bookings', schema);
