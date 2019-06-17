@@ -273,7 +273,7 @@ exports.searchHotel=(req, res)=>{
        sort:{'_id':-1}
 }
     try{
-        hotelModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"description":{$regex: value, $options: 'gi'}}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, hotel)=>{
+        hotelModel.paginate({"location":{$regex: value, $options: 'gi'}}, options, (err, hotel)=>{
             if(err)res.json({code:"01", messaeg:"error returning hotels"})
             res.json({code:"00", message:hotel})
         })

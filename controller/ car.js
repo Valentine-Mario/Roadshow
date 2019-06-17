@@ -217,7 +217,7 @@ exports.searchCar=(req, res)=>{
     }
     var value= req.params.value;
     try{
-        carModel.paginate({$or:[{"name":{$regex: value, $options: 'gi'}}, {"price":{$regex: value, $options: 'gi'}}, {"supplier_location":{$regex: value, $options: 'gi'}}]}, options, (err, car)=>{
+        carModel.paginate({"supplier_location":{$regex: value, $options: 'gi'}}, options, (err, car)=>{
             if(err)res.json({code:"01", messaeg:"error returning car"})
             res.json({code:"00", message:car})
         }) 

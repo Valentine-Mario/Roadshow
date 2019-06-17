@@ -14,7 +14,6 @@ var schema= new mongoose.Schema({
     venue_price_spec:{type:Number, default:0},
     car_price_spec:{type:Number, default:0},
     fligh_price_perk:{type:Number, default:0},
-    flight_type_spec:String
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('user', schema);

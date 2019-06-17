@@ -36,7 +36,7 @@ exports.addHotelBooking=(req, res)=>{
                             var room_price=room.price.replace(/^\D+/g, '')
                             data.price=parseInt(room_price)*data.duration*parseInt(data.no_of_rooms);
                             var obj={
-                                name:'Hotel',
+                                type:'Hotel',
                                 details:`Hotel at ${hotel[0].name} located at ${hotel[0].location}, 
                                 price is ${data.price} duration is ${data.duration} in days
                                 room type is ${room.type} at the price of $ ${data.price}`,
@@ -125,7 +125,7 @@ exports.addCarBooking=(req, res)=>{
                     data.price=data.duration * parseInt(car_price)*parseInt(data.quantity) 
                     console.log(data.price)
                     var obj={
-                        name:'Car',
+                        type:'Car',
                         details:`Car rental of ${car.name} at ${car.supplier_location}
                         for the price of $ ${data.price} for ${data.quantity} quantity for the duration of ${data.duration} in days`,
                         start_date:data.start_date,
@@ -203,7 +203,7 @@ exports.addVenueBooking=(req, res)=>{
                     var venue_price=venue.pricing.replace(/^\D+/g, '')
                     data.price=parseInt(venue_price)*data.duration
                     var obj={
-                        name:'Venue',
+                        type:'Venue',
                         details:`Venue rental at ${venue.name} at ${venue.location}
                         with ${venue.capacity} capacity, at the price of 
                         ${data.price} for the duration of ${data.duration} in days`,
@@ -275,7 +275,7 @@ exports.addFlight=(req, res)=>{
                     var flight_price=flight.price.replace(/^\D+/g, '')
                     data.price=parseInt(data.no_of_people)*parseInt(flight_price) 
                     var obj={
-                        name:'Flight',
+                        type:'Flight',
                         details:`Flight from ${flight.destination_from} to ${flight.destination_to},
                         departure airport is ${flight.departure_airport} and arrival airport 
                         is ${flight.arrival_airport}. Price is $ ${data.price} for

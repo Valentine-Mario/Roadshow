@@ -46,7 +46,7 @@ exports.addUser=(req, res)=>{
     }
     try{
         if(data.password.length<6){
-            res.json({code:"01", message:"password must be atv least 6 characters"})
+            res.json({code:"01", message:"password must be at least 6 characters"})
         }else{
             userModel.findOne({email: data.email}, (err, email_value)=>{
                 if(email_value!==null){
@@ -447,8 +447,7 @@ exports.resetCar=(req, res)=>{
 
 exports.setFlight=(req, res)=>{
     var data={
-    fligh_price_perk:req.body.fligh_price_perk,
-    flight_type_spec:req.body.flight_type_spec
+    fligh_price_perk:req.body.fligh_price_perk
     }
     try{
         jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
@@ -464,9 +463,8 @@ exports.setFlight=(req, res)=>{
 
 exports.resetFlight=(req, res)=>{
     var data={
-        fligh_price_perk:0,
-        flight_type_spec:undefined
-        }
+        fligh_price_perk:0
+            }
     try{
         jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
             userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
