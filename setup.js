@@ -29,7 +29,8 @@ passport.use(new GoogleStrategy({
                     auth_id:profile.id,
                     verified:true,
                     access:0,
-                    date_created:Date.now()
+                    date_created:Date.now(),
+                    
                 }
                 User.create(data, (err, user_details)=>{
                     if(err){
