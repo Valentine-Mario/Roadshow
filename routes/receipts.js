@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var receiptController=require('../controller/receipts')
-var verification=require('../controller/verification')
+var verification=require('../verification/verification')
 var multer = require('multer')
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {

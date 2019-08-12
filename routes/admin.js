@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var adminController=require('../controller/admin')
-const verification= require('../controller/verification')
+const verification= require('../verification/verification')
 
 
 router.get('/getusers', verification.verifyToken, adminController.getAllUsers)

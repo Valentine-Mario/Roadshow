@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var userController=require('../controller/user')
 var passport=require('passport')
-const verification= require('../controller/verification')
+const verification= require('../verification/verification')
 
 /* GET users listing. */
 router.get('/googleadd', passport.authenticate('google', {

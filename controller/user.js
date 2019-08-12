@@ -5,6 +5,7 @@ var pdf = require('html-pdf');
 var cloudinary= require('cloudinary')
 require('dotenv').config()
 const fs = require('fs');
+const auth_user=require('../helpers/auth')
 var nodemailer = require('nodemailer');
   var transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -115,7 +116,7 @@ exports.login=(req, res)=>{
                             res.json({code:"01", message:"please verify email before you log in"})
                         }else{
                             user=user._id
-                            jwt.sign({user}, "golden_little_kids", (err, token)=>{
+                            auth_user.createToken({user}).then(token=>{
                                 res.json({code:"00", message:token})
                             })
                         }
@@ -136,15 +137,8 @@ exports.login=(req, res)=>{
 
   exports.getProfile=(req, res)=>{
       try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            if(err){
-                res.json({code:"01", err:err, message:"error verifying token"})
-            }else{
-                userModel.findById(decoded_user.user, (err, user_details)=>{
-                    if(err)res.json({code:"01", err:err, message:"error getting user details"})
-                    res.json({code:"00", message:user_details})
-                })
-            }
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            res.json({code:"00", message:decoded_user})
         })
       }catch(e){
           console.log(e)

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const verification= require('../controller/verification')
+const verification= require('../verification/verification')
 var hotelController= require('../controller/hotels');
 var multer = require('multer')
 var storage = multer.diskStorage({

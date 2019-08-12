@@ -43,8 +43,7 @@ app.use(function(req, res, next) {
   
   });
 
-//var url='mongodb://localhost:27017/road-show'
-var url='mongodb+srv://place:place-locate@roadshow-jhhwo.mongodb.net/test?retryWrites=true&w=majority'
+var url=process.env.MONGODB_DEV
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
 
