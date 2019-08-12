@@ -11,7 +11,7 @@ router.get('/googleadd', passport.authenticate('google', {
 
 router.get('/google', passport.authenticate('google'), userController.addGoogleUser)
 router.post('/add', userController.addUser)
-router.get('/approve/:id', userController.approveEmail)
+router.get('/approve', verification.verifyMail, userController.approveEmail)
 router.post('/login', userController.login)
 router.get('/getprofile', verification.verifyToken, userController.getProfile)
 router.post('/edit', verification.verifyToken, userController.editDetails)

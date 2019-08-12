@@ -30,9 +30,24 @@ class auth{
         return new Promise((resolve, reject)=>{
             jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token_value)=>{
                 if(err)reject(err)
-                resolve(token_value)
+                return resolve(token_value)
             })
         })
+    }
+
+    verifyTokenMail(token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET, function(err, decodedToken) {
+                if (err) {
+                    reject(err);
+                } else {
+                    usrModel.findById(decodedToken.user, (err, user)=>{
+                        if(err)reject(err)
+                        resolve(user)
+                    })
+                }
+            });
+        });
     }
 }
 

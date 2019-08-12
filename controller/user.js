@@ -6,6 +6,7 @@ var cloudinary= require('cloudinary')
 require('dotenv').config()
 const fs = require('fs');
 const auth_user=require('../helpers/auth')
+const mail=require('../helpers/mail')
 var nodemailer = require('nodemailer');
   var transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -24,11 +25,11 @@ cloudinary.config({
 exports.addGoogleUser=(req, res)=>{
     try{
         var user=req.user._id
-    jwt.sign({user}, "golden_little_kids", (err, user_token)=>{
-       var responseHTML = '<html><head><title>Main</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");window.close(); </script></html>'
+    auth_user.createToken({user}).then(token=>{
+        var responseHTML = '<html><head><title>Main</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");window.close(); </script></html>'
     responseHTML = responseHTML.replace('%value%', JSON.stringify({
         code:"00",
-        user: user_token
+        user: token
     }));
     res.status(200).send(responseHTML);
     })
@@ -56,27 +57,13 @@ exports.addUser=(req, res)=>{
                     bcrypt.hash(data.password, 15, (err, hashed)=>{
                         data.password=hashed
                         userModel.create(data, (err, user_details)=>{
-                                var mailOptions={
-                                    from:`Road Show`,
-                                                to:user_details.email,
-                                                subject:`Dear ${user_details.name}, email verification`,
-                                                html:`
-                                                <div>
-                                                Welcome to Job miner, click on the link below to verify account
-                                                <br/>
-                                                <a href="https://rocky-mesa-69765.herokuapp.com/user/approve/${user_details._id}">click</a>
-                                                </div>
-                                                `
-                                }
-                                transporter.sendMail(mailOptions, function(err, info){
-                                    if(err){
-                                        console.log(err)
-                                        return false
-                                    }else{
-                                        console.log("email sent")
-                                        res.json({code:"00", mesage:"account created successfully"})
-                                    }
-                                })
+                            user=user_details._id
+                            auth_user.mailerToken({user}).then(token=>{
+                                mail.signup(user_details.email, "Welcome", user_details.name, token).then(val=>{
+                                    res.json(val)
+                                })  
+                            })
+                            
                         })
                     })
                 }
@@ -88,14 +75,16 @@ exports.addUser=(req, res)=>{
 }
 
 exports.approveEmail=(req, res)=>{
-    var id={_id:req.params.id}
+    var token=req.query.token
     var data={
         verified:true
     }
     try{
-        userModel.findByIdAndUpdate(id, data, (err)=>{
-            if(err)res.json({code:"01", err:err, message:"error approving account, try again"})
-            res.json({code:"00", message:"account approved successfully"})
+        auth_user.verifyTokenMail(token).then(user_value=>{
+            userModel.findByIdAndUpdate(user_value._id, data, (err)=>{
+                if(err)res.json({code:"01", err:err, message:"error approving account, try again"})
+                res.json({code:"00", message:"account approved successfully"})
+            })
         })
     }catch(e){
         console.log(e)
