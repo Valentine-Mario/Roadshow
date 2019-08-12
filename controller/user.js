@@ -154,9 +154,8 @@ exports.login=(req, res)=>{
         password:req.body.password
     }
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, user)=>{
-            userModel.findById(user.user, (err, user_info)=>{
-                bcrypt.compare(old_password, user_info.password, function(err, passwordVal){
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+                bcrypt.compare(old_password, decoded_user.password, function(err, passwordVal){
                     if(!passwordVal){
                         res.json({message:"wrong old password"})
                     }else{
@@ -165,7 +164,7 @@ exports.login=(req, res)=>{
                         }else{
                             bcrypt.hash(data.password, 15, function(err, hash) {
                                 data.password = hash;
-                                userModel.findByIdAndUpdate(user.user, data, function(err){
+                                userModel.findByIdAndUpdate(decoded_user._id, data, function(err){
                                     if(err) res.json({err:err, message:"error, could not update password"})
                                     res.json({code:"00", message:"password changed successfully."})
                                 })
@@ -174,8 +173,9 @@ exports.login=(req, res)=>{
                         
                     }
             })
+        
         })
-    })
+    
     }catch(e){
         console.log(e)
     }
