@@ -131,22 +131,17 @@ exports.login=(req, res)=>{
         email:req.body.email,
     }
     try{
-        
-            jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-               
-                
-                userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
-                   if(err){
-                    if (err.name === 'MongoError' && err.code === 11000) {
-                        res.json({code:"01", message:"email already exist"})
-                      }
-                   } else{
-                    res.json({code:"00", message:"update successful"});
-                   }                      
-                })   
-               
-                })
-           
+            auth_user.verifyToken(req.token).then(decoded_user=>{
+                userModel.findByIdAndUpdate(decoded_user._id, data, (err)=>{
+                    if(err){
+                     if (err.name === 'MongoError' && err.code === 11000) {
+                         res.json({code:"01", message:"email already exist"})
+                       }
+                    } else{
+                     res.json({code:"00", message:"update successful"});
+                    }                      
+                 })  
+            }) 
         
     }catch(e){
         console.log(e)
