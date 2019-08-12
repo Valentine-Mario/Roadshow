@@ -5,7 +5,7 @@ var cloudinary= require('cloudinary')
 require('dotenv').config()
 const auth_user=require('../helpers/auth')
 const mail=require('../helpers/mail')
-
+const hasher=require('../helpers/password-bcrypt')
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
     api_key: process.env.API_KEY, 
@@ -44,7 +44,7 @@ exports.addUser=(req, res)=>{
                 if(email_value!==null){
                     res.json({code:"01", message:"email already exist choose a new email"})
                 }else{
-                    bcrypt.hash(data.password, 15, (err, hashed)=>{
+                    hasher.hash_password(data.password).then(hashed=>{
                         data.password=hashed
                         userModel.create(data, (err, user_details)=>{
                             user=user_details._id
@@ -89,8 +89,8 @@ exports.login=(req, res)=>{
     try{
         userModel.findOne({email:data.email}, (err, user)=>{
             if(user){
-                bcrypt.compare(data.password, user.password, function(err, passwordVal){
-                    if(passwordVal){
+                hasher.compare_password(data.password, user.password).then(value=>{
+                    if(value){
                         if(user.verified==false){
                             res.json({code:"01", message:"please verify email before you log in"})
                         }else{
@@ -104,7 +104,7 @@ exports.login=(req, res)=>{
             else{
                 res.json({code:"01", message:"invalid password"})
             }
-        })
+                })   
     } else{
                 res.json({code:"01", message:"this email dosen't exist"});
             }
@@ -155,25 +155,24 @@ exports.login=(req, res)=>{
     }
     try{
         auth_user.verifyToken(req.token).then(decoded_user=>{
-                bcrypt.compare(old_password, decoded_user.password, function(err, passwordVal){
-                    if(!passwordVal){
-                        res.json({message:"wrong old password"})
-                    }else{
-                        if(data.password.length<6){
-                            res.json({code:"01", message:"password should be 6 or more characters"})
-                        }else{
-                            bcrypt.hash(data.password, 15, function(err, hash) {
-                                data.password = hash;
-                                userModel.findByIdAndUpdate(decoded_user._id, data, function(err){
-                                    if(err) res.json({err:err, message:"error, could not update password"})
-                                    res.json({code:"00", message:"password changed successfully."})
-                                })
-                            })
-                        }
-                        
-                    }
-            })
-        
+        hasher.compare_password(old_password, decoded_user.password).then(value=>{
+            if(!value){
+                res.json({message:"wrong old password"})
+            }else{
+                if(data.password.length<6){
+                    res.json({code:"01", message:"password should be 6 or more characters"})
+                }else{
+                    hasher.hash_password(data.password).then(hashed=>{
+                        data.password = hashed;
+                        userModel.findByIdAndUpdate(decoded_user._id, data, function(err){
+                            if(err) res.json({err:err, message:"error, could not update password"})
+                            res.json({code:"00", message:"password changed successfully."})
+                        })
+                    })
+                }
+                
+            }
+        })
         })
     
     }catch(e){
