@@ -1,21 +1,11 @@
 const userModel= require('../models/user');
 const jwt=require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
-var pdf = require('html-pdf');
 var cloudinary= require('cloudinary')
 require('dotenv').config()
-const fs = require('fs');
 const auth_user=require('../helpers/auth')
 const mail=require('../helpers/mail')
-var nodemailer = require('nodemailer');
-  var transporter = nodemailer.createTransport({
-      service: 'gmail',
-      name:"job-finder",
-      auth: {
-          user: process.env.EMAIL,
-          pass: process.env.EMAIL_PASSWORD
-      }
-  });
+
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
     api_key: process.env.API_KEY, 
@@ -250,81 +240,12 @@ exports.login=(req, res)=>{
 
 exports.requestPdf=(req, res)=>{
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findById(decoded_user.user, (err, user)=>{
-                if(err){
-                    res.json({code:"01", err:err, message:"error getting user details"})
-                }else{
-                    if(user.activity.length<1){
-                        res.json({code:"01", message:"you have no booking records"})
-                    }else{
-                        fs.appendFile(`./files/${user._id}.pdf`, '', (err)=>{
-                            if(err){
-                                res.json({code:"01", message:"error creating pdf. Try again"})
-                            }else{
-                                var options = { format: 'Letter' };
-                        var str=`<div style="width:100%;">
-                        <div style="width:30%; float:left;">
-                            <img width='200' height='200' src="https://res.cloudinary.com/rchain/image/upload/v1556621544/roadshow.png">
-                        </div>
-                        <div style="width:70%; font-family:Comic Sans MS, cursive, sans-serif; float:left;">
-                            <h2 style="padding-top: 50px;">Your Roadshow Booking Details</h2>
-                            <br/>
-                            <p style="padding-top: 10px; font-size: 18px;">Dear ${user.name}, below is the details of your bookings on Roadshow</p>
-                        </div>
-                        <hr/>
-                    </div>
-                          <ol style="padding-top:30px;">`
-                        for(a of user.activity){
-                            str += '<li> <b>Type</b>:'+ a.type + '<br/><br/> <b>Details</b>:'+ a.details + '<br/><br/> <b>Start date</b>:'+ a.start_date+ '<br/><br/> <b>End date</b>:'+ a.end_date+ '</li> <hr/>';
-
-                        }
-                        str += '</ol">';
-                        str+='<small><i>Thank you for using Roadshow </i></small>'
-                        pdf.create(str, options).toFile(`./files/${user._id}.pdf`, function(err, response) {
-                            if(err){
-                                res.json({code:"01", err:err, message:"error writing to pdf"})
-                            }else{
-                                // cloudinary.uploader.upload(`./files/${user._id}.pdf`, (pdf_details)=>{
-
-                                // }, {resource_type:"auto"}).then((user_pdf)=>{
-                                //     user_link=user_pdf.secure_url
-                                    var mailOption={
-                                        from:`Road Show`,
-                                        to:user.email,
-                                        subject:`Booking details in PDF`,
-                                        attachments:[
-                                            {   
-                                                filename:`${user.name}.pdf`,
-                                                path:`./files/${user._id}.pdf`
-                                            },
-                                        ],
-                                        html:`
-                                       <div>
-                                       Attached to this mail is a copy of your bookings on roadshow
-                                       </div>
-                                       <br/>
-                                        `
-                                    };
-                                    transporter.sendMail(mailOption, function(err, info){
-                                        if(err){
-                                            console.log(err)
-                                            return false
-                                        }else{
-                                            console.log("email sent")
-                                            res.json({code:"00", message:"email sent successfully"})
-                                            return true;
-                                        }
-                                    })
-                                // })
-                            }
-                          })
-                            }
-                        })
-                    }
-                }
+        auth_user.verifyToken(req.token).then(user=>{
+            mail.pdf_email(user).then(value=>{
+                res.json(value)
             })
         })
+                
     }catch(e){
         console.log(e)
     }
