@@ -1,7 +1,5 @@
 var receiptModel= require('../models/receipts');
-var jwt=require('jsonwebtoken')
 const auth_user=require('../helpers/auth')
-
 const cloud=require('../helpers/cloud')
 class Receipts{
     add_receipt(req, res){
@@ -111,22 +109,23 @@ class Receipts{
              images:req.body.images
         }
       try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            receiptModel.findById(id, (err, receipt)=>{
-                if(JSON.stringify(receipt.user)!== JSON.stringify(decoded_user.user)){
-                    res.status(503).json({code:"01", message:"unauthorised to edit details"})
-                }else{
-                    if(receipt.images.includes(data.images)){
-                        var index= receipt.images.indexOf(data.images)
-                        receipt.images.splice(index, 1)
-                        receipt.save()
-                        res.json({code:"00", message:"image successfully removed"})
-                        }else{
-                            res.json({code:"01", message:"image not found"})
-                        }
-                }
-            })
+       auth_user.verifyToken(req.token).then(user=>{
+        receiptModel.findById(id, (err, receipt)=>{
+            if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
+                res.status(503).json({code:"01", message:"unauthorised to edit details"})
+            }else{
+                if(receipt.images.includes(data.images)){
+                    var index= receipt.images.indexOf(data.images)
+                    receipt.images.splice(index, 1)
+                    receipt.save()
+                    res.json({code:"00", message:"image successfully removed"})
+                    }else{
+                        res.json({code:"01", message:"image not found"})
+                    }
+            }
         })
+       })
+        
       }catch(e){
           console.log(e)
       }
@@ -134,9 +133,9 @@ class Receipts{
     removeReceipt(req, res){
         var id={_id:req.params.id}
         try{
-            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            auth_user.verifyToken(req.token).then(user=>{
                 receiptModel.findById(id, (err, receipt)=>{
-                    if(JSON.stringify(receipt.user)!== JSON.stringify(decoded_user.user)){
+                    if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
                         res.status(503).json({code:"01", message:"unauthorised to delete details"})
                     }else{
                         receiptModel.findByIdAndDelete(id, (err)=>{
@@ -145,7 +144,7 @@ class Receipts{
                         })
                     }
                 })
-            })
+            })   
         }catch(e){
             console.log(e)
         }
@@ -158,8 +157,8 @@ class Receipts{
         sort:{'_id':-1}
 }
         try{
-            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-                receiptModel.paginate({user:decoded_user.user}, options, (err, receipt)=>{
+            auth_user.verifyToken(req.token).then(user=>{
+                receiptModel.paginate({user:user._id}, options, (err, receipt)=>{
                     if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
                     res.status(200).json({code:"00", message:receipt})
                 })
@@ -185,8 +184,8 @@ class Receipts{
             date:req.body.date
         }
         try{
-            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-                receiptModel.find({$and:[{user:decoded_user.user}, {date:data.date}]}, (err, receipt)=>{
+            auth_user.verifyToken(req.token).then(user=>{
+                receiptModel.find({$and:[{user:user._id}, {date:data.date}]}, (err, receipt)=>{
                     if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
                     res.status(200).json({code:"00", message:receipt})
                 })
