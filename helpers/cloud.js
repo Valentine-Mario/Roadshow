@@ -10,8 +10,8 @@ cloudinary.config({
   class cloud{
     pics_upload(file){
         return new Promise((res, rej)=>{
-            cloudinary.uploader.upload(file, function(err, result)=>{
-                if(err)rej(err)
+            cloudinary.uploader.upload(file, function(result_pass){
+            }, {resource_type:"image"}).then((result)=>{
                 res(result)
             })
         })
