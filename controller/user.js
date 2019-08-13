@@ -182,17 +182,12 @@ exports.login=(req, res)=>{
 
   exports.deleteAccount=(req, res)=>{
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            if(err){
-                res.json({err:err, message:"error decoding information"})
-            }else{
-                userModel.findByIdAndRemove(decoded_user.user, (err)=>{
-                    if(err)res.json({code:"01", message:"error deleting account"})
-                    res.json({code:"00", message:"account deleted successfully"})
+                auth_user.verifyToken(req.token).then(user=>{
+                    userModel.findByIdAndRemove(user._id, (err)=>{
+                        if(err)res.json({code:"01", message:"error deleting account"})
+                        res.json({code:"00", message:"account deleted successfully"})
+                    })
                 })
-            }
-            
-        })
     }catch(e){
         console.log(e)
     }
@@ -207,23 +202,15 @@ exports.login=(req, res)=>{
     try{
        userModel.find({verified:true}, (err, user)=>{
             for(item of user){
-                var mailOption={
-                    from:`Road Show`,
-                    to:item.email,
-                    subject:`${data.header}`,
-                    html:`
-                    ${data.content}
-                    `
-                };
-                transporter.sendMail(mailOption, function(err, info){
-                    if(err){
-                        console.log(err)
-                        return false
-                    }else{
-                        console.log("email sent")
-                        res.json({code:"00", message:"email sent successfully"})
-                        return true;
-                    }
+                
+                mail.notify_email(data.header, data.content, item.email, item.name).then(response=>{
+                    
+                        if(response==true){
+                            console.log("mail sent successfully")
+                        }else{
+                            console.log("error sending mail")
+                        }
+                    
                 })
             }
         })
@@ -250,8 +237,8 @@ exports.setHotel=(req, res)=>{
         hotel_price_spec:req.body.hotel_price_spec,
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
@@ -268,12 +255,13 @@ exports.resetHotel=(req, res)=>{
         hotel_price_spec:0,
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
+            auth_user.verifyToken(req.token).then(user=>{
+                userModel.findByIdAndUpdate(user._id, data, (err)=>{
+                    if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                    res.status(200).json({code:"00", message:"details modified successfully"})
+                })
             })
-        })
+       
     }catch(e){
         console.log(e)
     }

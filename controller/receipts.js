@@ -1,6 +1,7 @@
 var receiptModel= require('../models/receipts');
 var cloudinary= require('cloudinary')
 var jwt=require('jsonwebtoken')
+const auth_user=require('../helpers/auth')
 require('dotenv').config()
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 

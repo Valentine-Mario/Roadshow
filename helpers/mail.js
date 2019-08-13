@@ -19,7 +19,7 @@ class mailer{
             ${user}<br/>
             <a href="https://rocky-mesa-69765.herokuapp.com/user/approve?token=${tempLink}">Click</a> to approve account
             <br/>
-            link expires after 1 hour
+            link expires after 1 day
             </div>`
             var mailOptions = {
                 from: '"Sprintrip"',
@@ -106,6 +106,26 @@ class mailer{
         }
     })
 }
+    notify_email(header, content, email, name){
+        return new Promise((resolve, reject)=>{
+            var mailOption={
+                from:`Road Show`,
+                to:email,
+                subject:header,
+                html:`
+                hello ${name} <br/>
+                ${content}
+                `
+            };
+            transporter.sendMail(mailOption, function(err, info){
+                if(err){
+                    reject(false)
+                }else{
+                    resolve(true)  
+                }
+            })
+        })
+    }
 
 }
 

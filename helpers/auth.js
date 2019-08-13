@@ -28,7 +28,7 @@ class auth{
 
     mailerToken(data){
         return new Promise((resolve, reject)=>{
-            jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token_value)=>{
+            jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '24h' }, (err, token_value)=>{
                 if(err)reject(err)
                 return resolve(token_value)
             })
