@@ -1,13 +1,7 @@
 var receiptModel= require('../models/receipts');
-var cloudinary= require('cloudinary')
 var jwt=require('jsonwebtoken')
 const auth_user=require('../helpers/auth')
-require('dotenv').config()
-cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.API_KEY, 
-    api_secret: process.env.API_SECRET 
-  });
+
 const cloud=require('../helpers/cloud')
 class Receipts{
     add_receipt(req, res){
@@ -94,9 +88,9 @@ class Receipts{
             location:req.body.location
         }
         try{
-            jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
+            auth_user.verifyToken(req.token).then(user=>{
                 receiptModel.findById(id, (err, receipt)=>{
-                    if(JSON.stringify(receipt.user)!== JSON.stringify(decoded_user.user)){
+                    if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
                         res.status(503).json({code:"01", message:"unauthorised to edit details"})
                     }else{
                         receiptModel.findByIdAndUpdate(id, data, (err)=>{
