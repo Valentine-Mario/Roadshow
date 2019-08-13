@@ -1,16 +1,8 @@
 const userModel= require('../models/user');
-const jwt=require('jsonwebtoken');
-const bcrypt=require('bcryptjs');
-var cloudinary= require('cloudinary')
-require('dotenv').config()
 const auth_user=require('../helpers/auth')
 const mail=require('../helpers/mail')
 const hasher=require('../helpers/password-bcrypt')
-cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.API_KEY, 
-    api_secret: process.env.API_SECRET 
-  });
+
 
 exports.addGoogleUser=(req, res)=>{
     try{
@@ -272,12 +264,13 @@ exports.setVenue=(req, res)=>{
         venue_price_spec:req.body.venue_price_spec
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
+            
     }catch(e){
         console.log(e)
     }
@@ -288,8 +281,8 @@ exports.resetVenue=(req, res)=>{
         venue_price_spec:0
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
@@ -304,8 +297,8 @@ exports.setCar=(req, res)=>{
         car_price_spec:req.body.car_price_spec
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
@@ -320,12 +313,13 @@ exports.resetCar=(req, res)=>{
         car_price_spec:0
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
+        
     }catch(e){
         console.log(e)
     }
@@ -336,8 +330,8 @@ exports.setFlight=(req, res)=>{
     fligh_price_perk:req.body.fligh_price_perk
     }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
@@ -352,8 +346,8 @@ exports.resetFlight=(req, res)=>{
         fligh_price_perk:0
             }
     try{
-        jwt.verify(req.token, 'golden_little_kids', (err, decoded_user)=>{
-            userModel.findByIdAndUpdate(decoded_user.user, data, (err)=>{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user._id, data, (err)=>{
                 if(err)res.status(401).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
