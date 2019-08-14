@@ -1,7 +1,5 @@
 var reviewModel=require('../models/car-review');
 var carModel=require('../models/cars');
-var userModel=require('../models/user')
-const jwt=require('jsonwebtoken');
 const auth_user=require('../helpers/auth')
 exports.addReview=(req, res)=>{
     var data={
