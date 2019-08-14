@@ -18,10 +18,11 @@ var airlineRouter=require('./routes/airline')
 var flightRouter=require('./routes/flight')
 var receiptRouter=require('./routes/receipts')
 var bodyParser = require('body-parser')
-
 var googleSetUp= require('./setup')
 require('dotenv').config()
+var timeout = require('express-timeout-handler');
 var app = express();
+
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb"}));
 app.use(passport.initialize());
@@ -34,6 +35,8 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveU
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 app.use(function(req, res, next) {
   
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
@@ -46,7 +49,17 @@ app.use(function(req, res, next) {
 var url=process.env.MONGODB_DEV
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
-
+var options = {
+  timeout: 60000,
+ 
+  onTimeout: function(req, res) {
+    res.status(503).json({code:"01", message:"service timed out"});
+  },
+ 
+};
+ 
+app.use(timeout.handler(options));
+ 
 
 app.use('/receipt', receiptRouter)
 app.use('/flight', flightRouter)
@@ -61,6 +74,7 @@ app.use('/hotel', hotelRouter)
 app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
+
 
 module.exports = app;
 

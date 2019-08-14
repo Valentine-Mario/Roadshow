@@ -2,7 +2,6 @@ var reviewModel=require('../models/hotel-reviews');
 var hotelModel=require('../models/hotels');
 const auth_user=require('../helpers/auth')
 
-
 exports.addReview=(req, res)=>{
     var data={
         comment:req.body.comment,
