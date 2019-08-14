@@ -1,7 +1,6 @@
 var reviewModel=require('../models/venue-review');
 var venueModel=require('../models/venues');
-var userModel=require('../models/user')
-const jwt=require('jsonwebtoken');
+const auth_user=require('../helpers/auth')
 
 
 exports.addReview=(req, res)=>{
@@ -14,8 +13,8 @@ exports.addReview=(req, res)=>{
     }
     var id={_id:req.params.id}
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            data.user=decoded_user.user
+        auth_user.verifyToken(req.token).then(user=>{
+            data.user=user._id
             data.venue=id
             if(parseInt(data.rating)>10||parseInt(data.rating)<1){
                 res.json({code:"01", message:"please enter a valid rating"})

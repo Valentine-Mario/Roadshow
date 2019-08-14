@@ -1,7 +1,5 @@
 var reviewModel=require('../models/hotel-reviews');
 var hotelModel=require('../models/hotels');
-var userModel=require('../models/user')
-const jwt=require('jsonwebtoken');
 const auth_user=require('../helpers/auth')
 
 
