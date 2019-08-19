@@ -2,6 +2,7 @@ const business_model=require('../models/business')
 const mail=require('../helpers/mail')
 const auth=require('../helpers/auth')
 const hasher=require('../helpers/password-bcrypt')
+const cloud=require('../helpers/cloud')
 class business{
     add_buisness(req, res){
         var data={
@@ -289,6 +290,41 @@ class business{
                     business_model.findOneAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"flight filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        updatePics(req, res){
+            var data={
+                pics:req.files[0].path  
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    cloud.pics_upload(data.pics).then(val=>{
+                        data.pics=val.secure_url
+                        business_model.findOneAndUpdate(business._id, data, (err)=>{
+                            if(err)res.status(501).json({code:"01", err:err, message:"error updating profile pics"})
+                            res.status(200).json({code:"00", message:"profile pics updated successfully"})
+                        })
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        resetPics(req, res){
+            var data={
+                pics:"https://res.cloudinary.com/school-fleep/image/upload/v1535357797/avatar-1577909_640.png"
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"picture reset error", err:err})
+                        res.status(200).json({code:"00", message:"profile pics reset successfully"})
                     })
                 })
             }catch(e){
