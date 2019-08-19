@@ -17,6 +17,7 @@ var carreviewRouter=require('./routes/car-review')
 var airlineRouter=require('./routes/airline')
 var flightRouter=require('./routes/flight')
 var receiptRouter=require('./routes/receipts')
+var businessRouter=require('./routes/business')
 var bodyParser = require('body-parser')
 var googleSetUp= require('./setup')
 require('dotenv').config()
@@ -74,7 +75,7 @@ app.use('/hotel', hotelRouter)
 app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
-
+app.use('/business', businessRouter)
 
 module.exports = app;
 

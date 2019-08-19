@@ -41,7 +41,7 @@ exports.addUser=(req, res)=>{
                         userModel.create(data, (err, user_details)=>{
                             user=user_details._id
                             auth_user.mailerToken({user}).then(token=>{
-                                mail.signup(user_details.email, "Welcome", user_details.name, token).then(val=>{
+                                mail.signup(user_details.email, "Welcome", user_details.name, token, 'user').then(val=>{
                                     res.json(val)
                                 })  
                             })

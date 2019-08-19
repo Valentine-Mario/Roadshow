@@ -1,6 +1,7 @@
 require('dotenv').config()
 const jwt=require('jsonwebtoken')
 const usrModel=require('../models/user')
+const busModel=require('../models/business')
 class auth{
     createToken(data){
         return new Promise((res, rej)=>{
@@ -26,6 +27,21 @@ class auth{
         })
     }
 
+    verifyBusinessToken(data){
+        return new Promise((res, rej)=>{
+            jwt.verify(data, process.env.JWT_SECRET, (err, decoded_token)=>{
+                if(err){
+                    rej(err)
+                }else{
+                    busModel.findById(decoded_token.biz, (err, business)=>{
+                        if(err)rej(err)
+                        res(business)
+                    })
+                }
+            })
+        })
+    }
+
     mailerToken(data){
         return new Promise((resolve, reject)=>{
             jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '24h' }, (err, token_value)=>{
@@ -44,6 +60,21 @@ class auth{
                     usrModel.findById(decodedToken.user, (err, user)=>{
                         if(err)reject(err)
                         resolve(user)
+                    })
+                }
+            });
+        });
+    }
+
+    verifyTokenMailBiz(token){
+        return new Promise((resolve, reject) => {
+            jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET, function(err, decodedToken) {
+                if (err) {
+                    reject(err);
+                } else {
+                    busModel.findById(decodedToken.biz, (err, business)=>{
+                        if(err)reject(err)
+                        resolve(business)
                     })
                 }
             });

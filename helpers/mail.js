@@ -12,12 +12,12 @@ var transporter = nodemailer.createTransport({
 
 class mailer{
 
-    signup(email, subject, user, tempLink){
+    signup(email, subject, user, tempLink, user_acc){
         return new Promise((resolve, reject)=>{
             var mailTemplate  = `<div>
             Welcome to sprinttrip
             ${user}<br/>
-            <a href="https://rocky-mesa-69765.herokuapp.com/user/approve?token=${tempLink}">Click</a> to approve account
+            <a href="https://rocky-mesa-69765.herokuapp.com/${user_acc}/approve?token=${tempLink}">Click</a> to approve account
             <br/>
             link expires after 1 day
             </div>`
@@ -31,7 +31,7 @@ class mailer{
                 if (error) {
                   reject({code:"00", message:error});
                 } else {
-                  resolve({code:"00", message:"mail sent successfully"})
+                  resolve({code:"00", message:"Mail sent successfully. Please verify account"})
                 }
               });
         })
