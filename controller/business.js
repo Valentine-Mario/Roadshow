@@ -11,26 +11,30 @@ class business{
             password:req.body.password,
             date_created:Date.now()
         }
-        if(data.password.length<6){
-            res.status(201).json({code:"01", message:"password must be at least 6 characters"})
-        }else{
-            business_model.findOne({email: data.email}, (err, email_value)=>{
-                if(email_value!==null){
-                    res.json({code:"01", message:"email already exist choose a new email"})
-                }else{
-                    hasher.hash_password(data.password).then(hashed=>{
-                        data.password=hashed
-                        business_model.create(data, (err, business)=>{
-                           var biz=business._id
-                            auth.mailerToken({biz}).then(token=>{
-                                mail.signup(business.email, "Welcome", business.name, token, 'business').then(val=>{
-                                    res.status(200).json(val)
-                                })  
+        try{
+            if(data.password.length<6){
+                res.status(201).json({code:"01", message:"password must be at least 6 characters"})
+            }else{
+                business_model.findOne({email: data.email}, (err, email_value)=>{
+                    if(email_value!==null){
+                        res.json({code:"01", message:"email already exist choose a new email"})
+                    }else{
+                        hasher.hash_password(data.password).then(hashed=>{
+                            data.password=hashed
+                            business_model.create(data, (err, business)=>{
+                               var biz=business._id
+                                auth.mailerToken({biz}).then(token=>{
+                                    mail.signup(business.email, "Welcome", business.name, token, 'business').then(val=>{
+                                        res.status(200).json(val)
+                                    })  
+                                })
                             })
                         })
-                    })
-                }
-            })
+                    }
+                })
+            }
+        }catch(e){
+            console.log(e)
         }
     }
 
@@ -49,6 +53,49 @@ class business{
     }catch(e){
         console.log(e)
     }
+    }
+
+    login(req, res){
+        var data={
+            email:req.body.email,
+            password:req.body.password
+        }
+        try{
+            business_model.findOne({email:data.email}, (err, business)=>{
+                if(business){
+                    hasher.compare_password(data.password, business.password).then(value=>{
+                        if(value){
+                            if(business.verified==false){
+                                res.json({code:"01", message:"please verify email before you log in"})
+                            }else{
+                                var biz=business._id
+                                auth.createToken({biz}).then(token=>{
+                                    res.status(200).json({code:"00", message:token})
+                                })
+                            }
+                            
+                }
+                else{
+                    res.status(201).json({code:"01", message:"invalid password"})
+                }
+                    })   
+        } else{
+                    res.status(203).json({code:"01", message:"this email dosen't exist"});
+                }
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
+
+    getProfile(req, res){
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                res.status(200).json({code:"00", message:business})
+            })
+        }catch(e){
+            console.log(e)
+        }
     }
 }
 module.exports=new business();
