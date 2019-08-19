@@ -167,5 +167,133 @@ class business{
                 console.log(e)
             }
         }
+
+        setHotel(req, res){
+            var data={
+                hotel_price_spec:req.body.hotel_price_spec,
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"hotel filter added"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        resetHotel(req, res){
+            var data={
+                hotel_price_spec:0,
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"hotel filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        setVenue(req, res){
+            var data={
+                venue_price_spec:req.body.venue_price_spec
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"venue filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        resetVenue(req, res){
+            var data={
+                venue_price_spec:0
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"venue filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        setCar(req, res){
+            var data={
+                car_price_spec:req.body.car_price_spec
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"car filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        resetCar(req, res){
+            var data={
+                car_price_spec:0
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"car filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        setFlight(req, res){
+            var data={
+                fligh_price_perk:req.body.fligh_price_perk
+                }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"flight filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
+
+        resetFlight(req, res){
+            var data={
+                fligh_price_perk:0
+                }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying details"})
+                        res.status(200).json({code:"00", message:"flight filter removed"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
 }
 module.exports=new business();

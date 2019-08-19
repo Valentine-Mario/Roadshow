@@ -231,7 +231,7 @@ exports.setHotel=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -249,7 +249,7 @@ exports.resetHotel=(req, res)=>{
     try{
             auth_user.verifyToken(req.token).then(user=>{
                 userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                    if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                    if(err)res.status(501).json({code:"01", message:"error modifying details"})
                     res.status(200).json({code:"00", message:"details modified successfully"})
                 })
             })
@@ -266,7 +266,7 @@ exports.setVenue=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -283,7 +283,7 @@ exports.resetVenue=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -299,7 +299,7 @@ exports.setCar=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -315,7 +315,7 @@ exports.resetCar=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -332,7 +332,7 @@ exports.setFlight=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
@@ -348,7 +348,7 @@ exports.resetFlight=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(401).json({code:"01", message:"error modifying details"})
+                if(err)res.status(501).json({code:"01", message:"error modifying details"})
                 res.status(200).json({code:"00", message:"details modified successfully"})
             })
         })
