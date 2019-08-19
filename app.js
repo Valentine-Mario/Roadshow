@@ -50,7 +50,7 @@ var url=process.env.MONGODB_DEV
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
 var options = {
-  timeout: 60000,
+  timeout: 120000,
  
   onTimeout: function(req, res) {
     res.status(503).json({code:"01", message:"service timed out"});
