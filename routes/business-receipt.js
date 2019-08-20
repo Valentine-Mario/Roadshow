@@ -14,5 +14,5 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 router.post('/add', upload.any(), verification.verifyToken, receiptController.addReceipt)
-
+router.post('/addimg/:id', upload.any(), verification.verifyToken, receiptController.addImages)
 module.exports = router;
