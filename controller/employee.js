@@ -113,6 +113,19 @@ class Employee{
             console.log(e)
         }
     }
+
+    getEmployee(req, res){
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                employeeModel.find({business:business._id}, (err, employee)=>{
+                    if(err)res.status(501).json({code:"01", message:"error getting users"})
+                    res.status(200).json({code:"00", message:employee})
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
 }
 
 module.exports=new Employee();

@@ -8,5 +8,6 @@ router.post('/edit/:id', verification.verifyToken, employeeController.modifyEmpl
 router.post('/editrole/:id', verification.verifyToken, employeeController.editRole)
 router.get('/delete/:id', verification.verifyToken, employeeController.deleteUser)
 router.get('/get/:id', employeeController.getUserById)
+router.get('/get', verification.verifyToken, employeeController.getEmployee)
 
 module.exports = router;
