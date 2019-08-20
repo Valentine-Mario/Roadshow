@@ -10,6 +10,7 @@ class business{
             email:req.body.email,
             description:req.body.description,
             password:req.body.password,
+            boss_email:req.body.boss_email,
             date_created:Date.now()
         }
         try{
@@ -104,7 +105,7 @@ class business{
             var data={
                 name:req.body.name,
                 email:req.body.email,
-                description:req.body.description  
+                description:req.body.description
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
@@ -123,6 +124,21 @@ class business{
             }
         }
 
+        editBossEmail(req, res){
+            var data={
+                boss_email:req.body.boss_email
+            }
+            try{
+                auth.verifyBusinessToken(req.token).then(business=>{
+                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        if(err)res.status(501).json({code:"01", message:"error modifying boss email"})
+                        res.status(200).json({code:"00", message:"update successful"})
+                    })
+                })
+            }catch(e){
+                console.log(e)
+            }
+        }
 
         updatePassword(req, res){
             var old_password= req.body.old_password

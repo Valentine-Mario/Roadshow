@@ -12,17 +12,10 @@ class Employee{
         try{
             auth.verifyBusinessToken(req.token).then(business=>{
                 data.business=business._id
-                employeeModel.find({$and:[{business:business._id}, {role:"Boss"}]}, (err, boss)=>{
-                    
-                    if(boss.length>0 && data.role=="Boss"){
-                        res.status(201).json({code:"01", message:"can only have one boss"})
-                    }else{
                         employeeModel.create(data, (err, employee)=>{
                             if(err)res.status(501).json({code:"01", err:err, message:"error adding employee"})
                             res.status(200).json({code:"00", message:`${employee.name} added as ${employee.role} successfully`})
                         })
-                    }
-                })
             })
         }catch(e){
             console.log(e)
@@ -62,16 +55,13 @@ class Employee{
             auth.verifyBusinessToken(req.token).then(business=>{
                 employeeModel.findById(id, (err, employee)=>{
                     if(JSON.stringify(employee.business)===JSON.stringify(business._id)){  
-                        employeeModel.find({$and:[{business:business._id}, {role:"Boss"}]}, (err, boss)=>{
-                            if(boss.length>0 && data.role=="Boss"){
-                                res.status(201).json({code:"01", message:"can only have one boss"})
-                            }else{
+                            
                                 employeeModel.findOneAndUpdate(id, data, (err)=>{
                                     if(err)res.status(501).json({code:"01", err:err, message:"error updating employee"})
                                     res.status(200).json({code:"00", message:"update successful"})
                                 })
-                            }
-                        })   
+                            
+                          
                     }else{
                         res.status(201).json({code:"01", message:"unauthorised to edit details"})
                     }
