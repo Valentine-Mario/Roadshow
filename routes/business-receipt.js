@@ -15,4 +15,7 @@ var upload = multer({ storage: storage })
 
 router.post('/add', upload.any(), verification.verifyToken, receiptController.addReceipt)
 router.post('/addimg/:id', upload.any(), verification.verifyToken, receiptController.addImages)
+router.post('/edit/:id', verification.verifyToken, receiptController.editReceipt)
+router.post('/removeimg/:id', verification.verifyToken, receiptController.removeImages)
+
 module.exports = router;

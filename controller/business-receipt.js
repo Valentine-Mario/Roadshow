@@ -79,6 +79,58 @@ class Business_Receipt{
             res.status(500)
         }
     }
+
+    editReceipt(req, res){
+        var id={_id:req.params.id}
+        var data={
+            location:req.body.location
+        }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                receiptModel.findById(id, (err, receipt)=>{
+                    if(JSON.stringify(receipt.business)!== JSON.stringify(business._id)){
+                        res.status(503).json({code:"01", message:"unauthorised to edit details"})
+                    }else{
+                        receiptModel.findByIdAndUpdate(id, data, (err)=>{
+                            if(err)res.status(501).json({code:"01", message:"error editing details"})
+                            res.status(200).json({code:"00", message:"details modified successfully"})
+                        })
+                    }
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+    removeImages(req, res){
+            var id={_id:req.params.id}
+            var data={
+                images:req.body.images
+            }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                receiptModel.findById(id, (err, receipt)=>{
+                    if(JSON.stringify(receipt.business)!== JSON.stringify(business._id)){
+                        res.status(503).json({code:"01", message:"unauthorised to edit details"})
+                    }else{
+                        if(receipt.images.includes(data.images)){
+                            var index= receipt.images.indexOf(data.images)
+                            receipt.images.splice(index, 1)
+                            receipt.save()
+                            res.json({code:"00", message:"image successfully removed"})
+                            }else{
+                                res.json({code:"01", message:"image not found"})
+                            }
+                    }
+                })
+               })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Business_Receipt();
