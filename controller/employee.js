@@ -81,6 +81,38 @@ class Employee{
             console.log(e)
         }
     }
+
+    deleteUser(req, res){
+        var id={_id:req.params.id}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                employeeModel.findById(id, (err, employee)=>{
+                    if(JSON.stringify(employee.business)===JSON.stringify(business._id)){
+                        employeeModel.findOneAndDelete(id, (err)=>{
+                            if(err) res.status(501).json({code:"01", message:"error deleting employee"})
+                            res.status(200).json({code:"00", message:`${employee.name} deleted successfully`})
+                        })
+                    }else{
+                        res.status(501).json({code:"01", message:"unauthorised to delete employee"})
+                    }
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
+
+    getUserById(req, res){
+        var id={_id:req.params.id}
+        try{
+            employeeModel.findById(id, (err, employee)=>{
+                if(err)res.status(501).json({code:"01", message:"error getting user"})
+                res.status(200).json({code:"00", message:employee})
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
 }
 
 module.exports=new Employee();
