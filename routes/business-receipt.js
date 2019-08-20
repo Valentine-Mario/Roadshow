@@ -17,5 +17,9 @@ router.post('/add', upload.any(), verification.verifyToken, receiptController.ad
 router.post('/addimg/:id', upload.any(), verification.verifyToken, receiptController.addImages)
 router.post('/edit/:id', verification.verifyToken, receiptController.editReceipt)
 router.post('/removeimg/:id', verification.verifyToken, receiptController.removeImages)
+router.get('/delete/:id', verification.verifyToken, receiptController.removeReceipt)
+router.get('/get', verification.verifyToken, receiptController.getReceipt)
+router.get('/get/:id', receiptController.getReceiptById)
+router.post('/filter', verification.verifyToken, receiptController.getRceiptByDay)
 
 module.exports = router;

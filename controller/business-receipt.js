@@ -131,6 +131,79 @@ class Business_Receipt{
             res.status(500)
         }
     }
+
+    removeReceipt(req, res){
+        var id={_id:req.params.id}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                receiptModel.findById(id, (err, receipt)=>{
+                    if(JSON.stringify(receipt.business)!== JSON.stringify(business._id)){
+                        res.status(503).json({code:"01", message:"unauthorised to delete details"})
+                    }else{
+                        receiptModel.findOneAndDelete(id, (err)=>{
+                            if(err)res.status(503).json({code:"01", message:"error deleting details"})
+                            res.status(200).json({code:"00", message:"details deleted successfully"})
+                        })
+                    }
+                })
+            })  
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+    getReceipt(req, res){
+        var {page, limit,}= req.query;
+        var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 10,
+        sort:{'_id':-1}
+}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                receiptModel.paginate({business:business._id}, options, (err, receipt)=>{
+                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+        
+    }
+
+    getReceiptById(req, res){
+        
+            var id={_id:req.params.id}
+            try{
+                receiptModel.findById(id, (err, receipt)=>{
+                    if(err)res.status(503).json({code:"01", message:"error getting receipt"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
+            }catch(e){
+                console.log(e)
+                res.status(500)
+            }
+    }
+
+    getRceiptByDay(req, res){
+        var data={
+            date:req.body.date
+        }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                receiptModel.find({$and:[{business:business._id}, {date:data.date}]}, (err, receipt)=>{
+                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
+
 }
 
 module.exports=new Business_Receipt();
