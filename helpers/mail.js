@@ -109,12 +109,35 @@ class mailer{
     notify_email(header, content, email, name){
         return new Promise((resolve, reject)=>{
             var mailOption={
-                from:`Road Show`,
+                from:`Sprintrip`,
                 to:email,
                 subject:header,
                 html:`
                 hello ${name} <br/>
                 ${content}
+                `
+            };
+            transporter.sendMail(mailOption, function(err, info){
+                if(err){
+                    reject(false)
+                }else{
+                    resolve(true)  
+                }
+            })
+        })
+    }
+
+    approval_mail(header, summary, email, link, type){
+        return new Promise((resolve, reject)=>{
+            var mailOption={
+                from:`Sprintrip`,
+                to:email,
+                subject:header,
+                html:`
+                The following booking needs approval
+                ${summary}<br/>
+                <a href="http://localhost:7000/bizbookin/approve/${type}/${link}">click</a> to approve<br/>
+                <a href="http://localhost:7000/bizbookin/disapprove/${type}/${link}">click</a> to disapprove
                 `
             };
             transporter.sendMail(mailOption, function(err, info){

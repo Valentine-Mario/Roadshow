@@ -10,7 +10,7 @@ var schema= new mongoose.Schema({
    roomType:String,
    business:String,
    no_of_rooms:Number,
-   employees:[{type:mongoose.Schema.Types.ObjectId, ref:'employees'}],
+   employees:[],
    approved:{type:Number, default:0}
 })
 schema.plugin(mongoosePaginate);

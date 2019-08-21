@@ -20,6 +20,8 @@ var receiptRouter=require('./routes/receipts')
 var businessRouter=require('./routes/business')
 var employeeRouter=require('./routes/employee')
 var businessreceiptRouter=require('./routes/business-receipt')
+var businessbookingRouter=require('./routes/business-bookings')
+var approvalRouter=require('./routes/approval')
 var bodyParser = require('body-parser')
 var googleSetUp= require('./setup')
 require('dotenv').config()
@@ -64,6 +66,8 @@ var options = {
 app.use(timeout.handler(options));
  
 
+app.use('/bizbookin', approvalRouter)
+app.use('/businessbooking', businessbookingRouter)
 app.use('/businessreceipt', businessreceiptRouter)
 app.use('/employee', employeeRouter)
 app.use('/receipt', receiptRouter)

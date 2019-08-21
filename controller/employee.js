@@ -116,6 +116,15 @@ class Employee{
             console.log(e)
         }
     }
+
+    getEmployeeForUse(id){
+        return new Promise((res, rej)=>{
+        employeeModel.find({business:id}, '-_id -__v -business', (err, employee)=>{
+            if(err)rej(err)
+            res(employee)
+        })
+    })
+    }
 }
 
 module.exports=new Employee();

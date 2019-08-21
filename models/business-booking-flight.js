@@ -7,7 +7,7 @@ var schema= new mongoose.Schema({
    business:String,
    no_of_people:String,
    price:Number,
-   employees:[{type:mongoose.Schema.Types.ObjectId, ref:'employees'}],
+   employees:[],
    approved:{type:Number, default:0}
 })
 schema.plugin(mongoosePaginate);
