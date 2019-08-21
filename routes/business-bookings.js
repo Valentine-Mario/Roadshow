@@ -7,4 +7,6 @@ router.post('/addhotel/:id', verification.verifyToken, bookingController.addHote
 router.get('/gethotel/:number', verification.verifyToken, bookingController.getHotelBooking)
 router.get('/flight/:id', verification.verifyToken, bookingController.addFlight)
 router.get('/getflight/:number', verification.verifyToken, bookingController.getFlightBooking)
+router.post('/addvenue/:id', verification.verifyToken, bookingController.addVenue)
+
 module.exports = router;

@@ -154,6 +154,47 @@ class Business_booking{
             res.status(500)
         }
     }
+    
+    addVenue(req, res){
+        var data={
+            type:'Venue',
+            start_date:new Date(req.body.start_date),
+            end_date:new Date(req.body.end_date),
+            duration:0,
+            venue_id:'',
+            business:'',
+            price:''
+        }
+        var id={_id:req.params.id}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                venueModel.findById(id, (err, venue)=>{
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
+                    data.venue_id=venue._id;
+                    data.business=business._id;
+                    var venue_price=venue.pricing.replace(/^\D+/g, '')
+                    data.price=parseInt(venue_price)*data.duration
+                   
+                    venueBookingModel.create(data, (err, venueBooking)=>{
+                        if(err){
+                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                        }else{
+                            var summary=`Venue rental at ${venue.name} at ${venue.location}
+                            with ${venue.capacity} capacity, at the price of 
+                            ${data.price} for the duration of ${data.duration} in days
+                            start date: ${data.start_date}
+                            end date: ${data.end_date}`
+                            mailer.approval_mail("Approval mail", summary, business.boss_email, venueBooking._id, 'venue')
+ 
+                            res.status(200).json({code:"00", message:"venue booking created successfully"})
+                        }
+                    })
+                })
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
 }
 
 module.exports=new Business_booking();
