@@ -8,5 +8,7 @@ router.get('/gethotel/:number', verification.verifyToken, bookingController.getH
 router.get('/flight/:id', verification.verifyToken, bookingController.addFlight)
 router.get('/getflight/:number', verification.verifyToken, bookingController.getFlightBooking)
 router.post('/addvenue/:id', verification.verifyToken, bookingController.addVenue)
-
+router.get('/getvenue/:number', verification.verifyToken, bookingController.getVenueBooking)
+router.post('/car/:id', verification.verifyToken, bookingController.addCarBooking)
+router.get('/getcar/:number', verification.verifyToken, bookingController.getCarBooking)
 module.exports = router;

@@ -6,7 +6,7 @@ var schema= new mongoose.Schema({
    end_date:Date,
    duration:Number,
    venue_id:{type:mongoose.Schema.Types.ObjectId, ref:'venues'},
-   user:String,
+   business:String,
    price:Number,
     approved:{type:Number, default:0}
 })

@@ -195,6 +195,92 @@ class Business_booking{
             console.log(e)
         }
     }
+
+    getVenueBooking(req, res){
+        var number= req.params.number
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 10,
+            sort:{'_id':-1}
+    }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                
+                venueBookingModel.paginate({$and:[{business:business._id}, {approved:parseInt(number)}]}, options, (err, data)=>{
+                    if(err)res.staus(501).json({code:"01", message:"error getting booking"})
+                    res.status(200).json({code:"00", message:data})
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+    addCarBooking(req, res){
+        var data={
+            type:'Car',
+            start_date:new Date(req.body.start_date),
+            end_date:new Date(req.body.end_date),
+            duration:0,
+            car_id:'',
+            business:'',
+            price:'',
+            quantity:req.body.quantity
+        }
+        var id={_id:req.params.id}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                carModel.findById(id, (err, car)=>{
+                    data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
+                    var car_price=car.price.replace(/^\D+/g, '')
+                    data.price=data.duration * parseInt(car_price)*parseInt(data.quantity) 
+                    data.car_id=car._id;
+                    data.business=business._id;
+                    carBookingModel.create(data, (err, carBooking)=>{
+                        if(err){
+                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                        }else{
+                            var summary=`
+                            Car rental of ${car.name} at ${car.supplier_location}
+                            for the price of $ ${data.price} for ${data.quantity} quantity for the duration of ${data.duration} in days
+                            start_date:${data.start_date},
+                            end_date:${data.end_date} 
+                            `
+                            mailer.approval_mail("Approval mail", summary, business.boss_email, carBooking._id, 'car')
+                            res.status(200).json({code:"00", message:"car booking created successfully"})
+                        }
+                    })
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+    getCarBooking(req, res){
+        var number= req.params.number
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 10,
+            sort:{'_id':-1}
+    }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                
+                carBookingModel.paginate({$and:[{business:business._id}, {approved:parseInt(number)}]}, options, (err, data)=>{
+                    if(err)res.staus(501).json({code:"01", message:"error getting booking"})
+                    res.status(200).json({code:"00", message:data})
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Business_booking();
