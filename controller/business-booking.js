@@ -132,6 +132,28 @@ class Business_booking{
             res.status(500)
         }
     }
+
+    getFlightBooking(req, res){
+        var number= req.params.number
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 10,
+            sort:{'_id':-1}
+    }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                
+                flightBookingModel.paginate({$and:[{business:business._id}, {approved:parseInt(number)}]}, options, (err, data)=>{
+                    if(err)res.staus(501).json({code:"01", message:"error getting booking"})
+                    res.status(200).json({code:"00", message:data})
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Business_booking();
