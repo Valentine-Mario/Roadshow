@@ -32,7 +32,7 @@ class Employee{
             auth.verifyBusinessToken(req.token).then(business=>{
                 employeeModel.findById(id, (err, employee)=>{
                     if(JSON.stringify(employee.business)===JSON.stringify(business._id)){                            
-                                employeeModel.findOneAndUpdate(id, data, (err)=>{
+                                employeeModel.findByIdAndUpdate(id, data, (err)=>{
                                     if(err)res.status(501).json({code:"01", err:err, message:"error updating employee"})
                                     res.status(200).json({code:"00", message:"update successful"})
                                 })
@@ -56,7 +56,7 @@ class Employee{
                 employeeModel.findById(id, (err, employee)=>{
                     if(JSON.stringify(employee.business)===JSON.stringify(business._id)){  
                             
-                                employeeModel.findOneAndUpdate(id, data, (err)=>{
+                                employeeModel.findByIdAndUpdate(id, data, (err)=>{
                                     if(err)res.status(501).json({code:"01", err:err, message:"error updating employee"})
                                     res.status(200).json({code:"00", message:"update successful"})
                                 })
@@ -109,7 +109,7 @@ class Employee{
             auth.verifyBusinessToken(req.token).then(business=>{
                 employeeModel.find({business:business._id}, (err, employee)=>{
                     if(err)res.status(501).json({code:"01", message:"error getting users"})
-                    res.status(200).json({code:"00", message:employee})
+                    return res.status(200).json({code:"00", message:employee})
                 })
             })
         }catch(e){

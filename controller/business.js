@@ -130,7 +130,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying boss email"})
                         res.status(200).json({code:"00", message:"update successful"})
                     })
@@ -175,7 +175,7 @@ class business{
         deleteAcc(req, res){
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndDelete(business._id, (err)=>{
+                    business_model.findByIdAndDelete(business._id, (err)=>{
                         if(err) res.status(501).json({code:"01", message:err})
                         res.status(200).json({code:"00", message:"account deleted successfully"})
                     })
@@ -191,7 +191,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"hotel filter added"})
                     })
@@ -207,7 +207,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"hotel filter removed"})
                     })
@@ -223,7 +223,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"venue filter removed"})
                     })
@@ -239,7 +239,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"venue filter removed"})
                     })
@@ -255,7 +255,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"car filter removed"})
                     })
@@ -271,7 +271,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"car filter removed"})
                     })
@@ -287,7 +287,7 @@ class business{
                 }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"flight filter removed"})
                     })
@@ -303,7 +303,7 @@ class business{
                 }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
                         res.status(200).json({code:"00", message:"flight filter removed"})
                     })
@@ -321,7 +321,7 @@ class business{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     cloud.pics_upload(data.pics).then(val=>{
                         data.pics=val.secure_url
-                        business_model.findOneAndUpdate(business._id, data, (err)=>{
+                        business_model.findByIdAndUpdate(business._id, data, (err)=>{
                             if(err)res.status(501).json({code:"01", err:err, message:"error updating profile pics"})
                             res.status(200).json({code:"00", message:"profile pics updated successfully"})
                         })
@@ -338,7 +338,7 @@ class business{
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
-                    business_model.findOneAndUpdate(business._id, data, (err)=>{
+                    business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"picture reset error", err:err})
                         res.status(200).json({code:"00", message:"profile pics reset successfully"})
                     })

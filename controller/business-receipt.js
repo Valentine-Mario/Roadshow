@@ -140,7 +140,7 @@ class Business_Receipt{
                     if(JSON.stringify(receipt.business)!== JSON.stringify(business._id)){
                         res.status(503).json({code:"01", message:"unauthorised to delete details"})
                     }else{
-                        receiptModel.findOneAndDelete(id, (err)=>{
+                        receiptModel.findByIdAndDelete(id, (err)=>{
                             if(err)res.status(503).json({code:"01", message:"error deleting details"})
                             res.status(200).json({code:"00", message:"details deleted successfully"})
                         })
