@@ -65,6 +65,73 @@ class Business_booking{
             res.status(500)
         }
     }
+
+    getHotelBooking(req, res){
+        var number= req.params.number
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 10,
+            sort:{'_id':-1}
+    }
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                
+                HotelBookingModel.paginate({$and:[{business:business._id}, {approved:parseInt(number)}]}, options, (err, data)=>{
+                    if(err)res.staus(501).json({code:"01", message:"error getting booking"})
+                    res.status(200).json({code:"00", message:data})
+                })
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+    addFlight(req, res){
+        var data={
+            type:'Flight',
+            flight_id:'',
+            business:'',
+            no_of_people:'',
+            price:'',
+            employees:''
+        }
+        var id={_id:req.params.id}
+        try{
+            auth.verifyBusinessToken(req.token).then(business=>{
+                flightModel.findById(id, (err, flight)=>{
+                    var flight_price=flight.price.replace(/^\D+/g, '')
+                    data.flight_id=flight._id,
+                    data.business=business._id
+                    employees.getEmployeeForUse(business._id).then(employee_details=>{
+                        data.no_of_people=employee_details.length
+                        data.employees=employee_details
+                        data.price=parseInt(data.no_of_people)*parseInt(flight_price) 
+                        flightBookingModel.create(data, (err, flightBooking)=>{
+                            if(err){
+                                res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            }else{
+                                var summary=`Flight from ${flight.destination_from} to ${flight.destination_to}
+                                departure airport is ${flight.departure_airport} and arrival airport 
+                                is ${flight.arrival_airport}. Price is $ ${data.price} for
+                                ${data.no_of_people} person(s), airline is ${flight.airline.name}
+                                start date:${flight.departure_date}
+                                arrivale date:${flight.arrival_date}
+                                employess:${employee_details}
+                                `
+                                mailer.approval_mail("Approval mail", summary, business.boss_email, flightBooking._id, 'flight')
+                                res.status(200).json({code:"00", message:"flight booking created successfully"})
+                            }
+                            })
+                    })
+                }).populate('airline')
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Business_booking();
