@@ -281,6 +281,24 @@ class Business_booking{
             res.status(500)
         }
     }
+
+     getAllBooking(req, res){
+        var number= req.params.number
+        try{
+             auth.verifyBusinessToken(req.token).then(async (business)=>{
+                var carBooking= await carBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
+                var flightBooking= await flightBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
+                var venueBooking= await venueBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
+                var hotelBooking=await HotelBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
+                res.status(200).json({code:"00", message:flightBooking.concat(carBooking, hotelBooking, venueBooking)})
+            })
+        }catch(e){
+            console.log(e)
+            res.status(500)
+        }
+    }
+
+        
 }
 
 module.exports=new Business_booking();

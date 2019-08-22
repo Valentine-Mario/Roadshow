@@ -11,4 +11,8 @@ router.post('/addvenue/:id', verification.verifyToken, bookingController.addVenu
 router.get('/getvenue/:number', verification.verifyToken, bookingController.getVenueBooking)
 router.post('/car/:id', verification.verifyToken, bookingController.addCarBooking)
 router.get('/getcar/:number', verification.verifyToken, bookingController.getCarBooking)
+router.get('/getall/:number', verification.verifyToken, bookingController.getAllBooking)
+
 module.exports = router;
+
+
