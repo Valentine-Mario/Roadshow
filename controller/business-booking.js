@@ -286,10 +286,15 @@ class Business_booking{
         var number= req.params.number
         try{
              auth.verifyBusinessToken(req.token).then(async (business)=>{
-                var carBooking= await carBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
-                var flightBooking= await flightBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
-                var venueBooking= await venueBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
-                var hotelBooking=await HotelBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]})
+                var carBooking= await carBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]}).populate('car_id')
+                var flightBooking= await flightBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]}).populate({
+                    path:'flight_id',
+                    populate:{
+                        path:'airline'
+                    }
+                })
+                var venueBooking= await venueBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]}).populate('venue_id')
+                var hotelBooking=await HotelBookingModel.find({$and:[{business:business._id}, {approved:parseInt(number)}]}).populate('hotel_id')
                 res.status(200).json({code:"00", message:flightBooking.concat(carBooking, hotelBooking, venueBooking)})
             })
         }catch(e){
