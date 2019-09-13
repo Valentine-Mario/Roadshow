@@ -51,7 +51,7 @@ app.use(function(req, res, next) {
   
   });
 
-var url=process.env.MONGODB_DEV
+var url=process.env.MONGODB_CLOUD
 mongoose.Promise= global.Promise;
 mongoose.connect(url, { useNewUrlParser: true }).catch((error) => { console.log(error); });
 var options = {

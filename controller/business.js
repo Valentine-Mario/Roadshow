@@ -142,12 +142,14 @@ class business{
 
         updatePassword(req, res){
             var old_password= req.body.old_password
+            
             var data={
                 password:req.body.password
             }
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     hasher.compare_password(old_password, business.password).then(value=>{
+                        
                         if(!value){
                             res.status(201).json({message:"wrong old password"})
                         }else{
@@ -156,7 +158,8 @@ class business{
                             }else{
                                 hasher.hash_password(data.password).then(hashed=>{
                                     data.password = hashed;
-                                    business_model.findOneAndUpdate(business._id, data, function(err){
+                                    
+                                    business_model.findByIdAndUpdate(business._id, data, function(err){
                                         if(err) res.status(501).json({code:"01", err:err, message:"error, could not update password"})
                                         res.status(200).json({code:"00", message:"password changed successfully."})
                                     })
@@ -322,8 +325,13 @@ class business{
                     cloud.pics_upload(data.pics).then(val=>{
                         data.pics=val.secure_url
                         business_model.findByIdAndUpdate(business._id, data, (err)=>{
-                            if(err)res.status(501).json({code:"01", err:err, message:"error updating profile pics"})
-                            res.status(200).json({code:"00", message:"profile pics updated successfully"})
+                            if(err){
+                                res.status(501).json({code:"01", err:err, message:"error updating profile pics"})
+                            }else{
+                                business_model.findById(business._id, (err, biz)=>{
+                                    res.status(200).json({code:"00", pics:biz.pics,  message:"profile pics updated successfully"})
+                                })
+                            }
                         })
                     })
                 })
@@ -339,8 +347,14 @@ class business{
             try{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     business_model.findByIdAndUpdate(business._id, data, (err)=>{
-                        if(err)res.status(501).json({code:"01", message:"picture reset error", err:err})
-                        res.status(200).json({code:"00", message:"profile pics reset successfully"})
+                        if(err){
+                            res.status(501).json({code:"01", message:"picture reset error", err:err})
+                        }else{
+                            business_model.findById(business._id, (err, biz)=>{
+                                res.status(200).json({code:"00",pics:biz.pics, message:"profile pics reset successfully"})
+
+                            })
+                        }
                     })
                 })
             }catch(e){
