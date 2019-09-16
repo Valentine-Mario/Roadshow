@@ -14,7 +14,7 @@ class Employee{
                 data.business=business._id
                         employeeModel.create(data, (err, employee)=>{
                             if(err)res.status(501).json({code:"01", err:err, message:"error adding employee"})
-                            res.status(200).json({code:"00", message:`${employee.name} added as ${employee.role} successfully`})
+                            res.status(200).json({code:"00", message:employee})
                         })
             })
         }catch(e){

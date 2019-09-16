@@ -228,7 +228,7 @@ class business{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                        res.status(200).json({code:"00", message:"venue filter removed"})
+                        res.status(200).json({code:"00", message:"venue filter added"})
                     })
                 })
             }catch(e){
@@ -260,7 +260,7 @@ class business{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                        res.status(200).json({code:"00", message:"car filter removed"})
+                        res.status(200).json({code:"00", message:"car filter added"})
                     })
                 })
             }catch(e){
@@ -292,7 +292,7 @@ class business{
                 auth.verifyBusinessToken(req.token).then(business=>{
                     business_model.findByIdAndUpdate(business._id, data, (err)=>{
                         if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                        res.status(200).json({code:"00", message:"flight filter removed"})
+                        res.status(200).json({code:"00", message:"flight filter added"})
                     })
                 })
             }catch(e){
