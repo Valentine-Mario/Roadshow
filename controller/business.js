@@ -26,9 +26,9 @@ class business{
                             business_model.create(data, (err, business)=>{
                                var biz=business._id
                                 auth.mailerToken({biz}).then(token=>{
-                                    mail.signup(business.email, "Welcome", business.name, token, 'business').then(val=>{
-                                        res.status(200).json(val)
-                                    })  
+                                    mail.signup(business.email, "Welcome", business.name, token, 'business')
+                                        res.status(200).json({code:"00", message:"approval mail sent successfully"})
+                                    
                                 })
                             })
                         })

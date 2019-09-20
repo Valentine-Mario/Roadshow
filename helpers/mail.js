@@ -13,7 +13,6 @@ var transporter = nodemailer.createTransport({
 class mailer{
 
     signup(email, subject, user, tempLink, user_acc){
-        return new Promise((resolve, reject)=>{
             var mailTemplate  = `<div>
             Welcome to sprinttrip
             ${user}<br/>
@@ -29,16 +28,15 @@ class mailer{
               };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
-                  reject({code:"00", message:error});
+                  console.log(error, false)
                 } else {
-                  resolve({code:"00", message:"Mail sent successfully. Please verify account"})
+                    console.log(true)
                 }
               });
-        })
+        
     }
 
     pdf_email(user){
-        return new Promise((resolve, reject)=>{
 
         if(user.activity.length<1){
             res.json({code:"01", message:"you have no booking records"})
@@ -90,11 +88,11 @@ class mailer{
                         };
                         transporter.sendMail(mailOption, function(err, info){
                             if(err){
-                                reject({code:"01", message:err})
+                                console.log(err, false)
                                 
                             }else{
                                 
-                                resolve({code:"00", message:"email sent successfully"})
+                               console.log(true)
                                 
                             }
                         })
@@ -104,10 +102,9 @@ class mailer{
                 }
             })
         }
-    })
+    
 }
     notify_email(header, content, email, name){
-        return new Promise((resolve, reject)=>{
             var mailOption={
                 from:`Sprintrip`,
                 to:email,
@@ -119,12 +116,12 @@ class mailer{
             };
             transporter.sendMail(mailOption, function(err, info){
                 if(err){
-                    reject(false)
+                    console.log(fasle, err)
                 }else{
-                    resolve(true)  
+                    console.log(true)  
                 }
             })
-        })
+    
     }
 
     approval_mail(header, summary, email, link, type){
@@ -141,7 +138,7 @@ class mailer{
             };
             transporter.sendMail(mailOption, function(err, info){
                 if(err){
-                    console.log(false)
+                    console.log(false, err)
                 }else{
                     console.log(true)  
                 }

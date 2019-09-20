@@ -41,9 +41,9 @@ exports.addUser=(req, res)=>{
                         userModel.create(data, (err, user_details)=>{
                             user=user_details._id
                             auth_user.mailerToken({user}).then(token=>{
-                                mail.signup(user_details.email, "Welcome", user_details.name, token, 'user').then(val=>{
-                                    res.json(val)
-                                })  
+                                mail.signup(user_details.email, "Welcome", user_details.name, token, 'user')
+                                    res.json({code:"00", message:"approval mail sent"})
+                                 
                             })
                             
                         })
@@ -219,9 +219,8 @@ exports.login=(req, res)=>{
 exports.requestPdf=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
-            mail.pdf_email(user).then(value=>{
-                res.json(value)
-            })
+            mail.pdf_email(user)
+                res.json({code:"00", message:"booking sent to mail"})
         })
                 
     }catch(e){
