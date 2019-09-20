@@ -10,6 +10,8 @@ const flightBookingModel=require('../models/flight-booking')
 const HotelBookingModel=require('../models/hotel-booking')
 const carBookingModel=require('../models/car-booking')
 const venueBookingModel=require('../models/venue-booking')
+const auth_user=require('../helpers/auth')
+
 exports.addHotelBooking=(req, res)=>{
     var data={
         type:'Hotel',
@@ -24,8 +26,8 @@ exports.addHotelBooking=(req, res)=>{
     }
     var id={_id:req.params.id}
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            userModel.findById(decoded_user.user, (err, user)=>{
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            userModel.findById(decoded_user._id, (err, user)=>{
                 if(err){
                     res.json({code:"01", message:"error getting user information"})
                 }else{
@@ -61,6 +63,8 @@ exports.addHotelBooking=(req, res)=>{
                 }
             })
         })
+           
+        
     }catch(e){
         console.log(e)
     }
@@ -117,8 +121,8 @@ exports.addCarBooking=(req, res)=>{
     }
     var id={_id:req.params.id}
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            userModel.findById(decoded_user.user, (err, user)=>{
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            userModel.findById(decoded_user._id, (err, user)=>{
                 carModel.findById(id, (err, car)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
                     var car_price=car.price.replace(/^\D+/g, '')
@@ -194,8 +198,8 @@ exports.addVenueBooking=(req, res)=>{
     }
     var id={_id:req.params.id}
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            userModel.findById(decoded_user.user, (err, user)=>{
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            userModel.findById(decoded_user._id, (err, user)=>{
                 venueModel.findById(id, (err, venue)=>{
                     data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
                     data.venue_id=venue._id;
@@ -269,8 +273,8 @@ exports.addFlight=(req, res)=>{
     }
     var id={_id:req.params.id}
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            userModel.findById(decoded_user.user, (err, user)=>{
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            userModel.findById(decoded_user._id, (err, user)=>{
                 flightModel.findById(id, (err, flight)=>{
                     var flight_price=flight.price.replace(/^\D+/g, '')
                     data.price=parseInt(data.no_of_people)*parseInt(flight_price) 
@@ -298,7 +302,9 @@ exports.addFlight=(req, res)=>{
                     
                 }).populate('airline')
             })
-        }) 
+        
+        })
+
     }catch(e){
         console.log(e)
     }
@@ -348,11 +354,12 @@ exports.removeBooking=(req, res)=>{
 
 exports.getAllBookings=(req, res)=>{
     try{
-        jwt.verify(req.token, "golden_little_kids", (err, decoded_user)=>{
-            carBookingModel.find({user:decoded_user.user}, (err, carbooking)=>{
-                flightBookingModel.find({user:decoded_user.user}, (err, flightBooking)=>{
-                    HotelBookingModel.find({user:decoded_user.user}, (err, hotelBooking)=>{
-                        venueBookingModel.find({user:decoded_user.user}, (err, venueBooking)=>{
+
+        auth_user.verifyToken(req.token).then(decoded_user=>{
+            carBookingModel.find({user:decoded_user._id}, (err, carbooking)=>{
+                flightBookingModel.find({user:decoded_user._id}, (err, flightBooking)=>{
+                    HotelBookingModel.find({user:decoded_user._id}, (err, hotelBooking)=>{
+                        venueBookingModel.find({user:decoded_user._id}, (err, venueBooking)=>{
                             res.status(200).json({code:"00", message:flightBooking.concat(carbooking, hotelBooking, venueBooking)})
                     
                         }).populate('venue_id')
