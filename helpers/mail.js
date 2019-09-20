@@ -128,7 +128,6 @@ class mailer{
     }
 
     approval_mail(header, summary, email, link, type){
-        return new Promise((resolve, reject)=>{
             var mailOption={
                 from:`Sprintrip`,
                 to:email,
@@ -142,12 +141,12 @@ class mailer{
             };
             transporter.sendMail(mailOption, function(err, info){
                 if(err){
-                    reject(false)
+                    console.log(false)
                 }else{
-                    resolve(true)  
+                    console.log(true)  
                 }
             })
-        })
+        
     }
 
 }
