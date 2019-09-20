@@ -134,8 +134,8 @@ class mailer{
                 html:`
                 The following booking needs approval
                 ${summary}<br/>
-                <a href="http://localhost:7000/bizbookin/approve/${type}/${link}">click</a> to approve<br/>
-                <a href="http://localhost:7000/bizbookin/disapprove/${type}/${link}">click</a> to disapprove
+                <a href="https://rocky-mesa-69765.herokuapp.com/bizbookin/approve/${type}/${link}">click</a> to approve<br/>
+                <a href="https://rocky-mesa-69765.herokuapp.com/bizbookin/disapprove/${type}/${link}">click</a> to disapprove
                 `
             };
             transporter.sendMail(mailOption, function(err, info){
