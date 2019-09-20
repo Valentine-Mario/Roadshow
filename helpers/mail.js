@@ -140,6 +140,7 @@ class mailer{
             };
             transporter.sendMail(mailOption, function(err, info){
                 if(err){
+                    console.log(process.env.EMAIL, EMAIL)
                     console.log(false, err)
                 }else{
                     console.log(true)  
