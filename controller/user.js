@@ -81,7 +81,11 @@ exports.login=(req, res)=>{
     try{
         userModel.findOne({email:data.email}, (err, user)=>{
             if(user){
+               if(user.password==null){
+                    res.json({code:"01", message:"please login with google"})
+               }else{
                 hasher.compare_password(data.password, user.password).then(value=>{
+                     
                     if(value){
                         if(user.verified==false){
                             res.json({code:"01", message:"please verify email before you log in"})
@@ -96,7 +100,8 @@ exports.login=(req, res)=>{
             else{
                 res.json({code:"01", message:"invalid password"})
             }
-                })   
+                })  
+               } 
     } else{
                 res.json({code:"01", message:"this email dosen't exist"});
             }
