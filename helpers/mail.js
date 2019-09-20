@@ -3,13 +3,16 @@ require('dotenv').config()
 var pdf = require('html-pdf');
 const fs = require('fs');
 var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.mail.yahoo.com',
+            port: 465,
+            service:'yahoo',
+            secure: false,
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD
-    }, tls: {
-        rejectUnauthorized: false
-      }
+    },
+    debug: false,
+    logger: true 
 });
 
 class mailer{
