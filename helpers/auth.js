@@ -5,7 +5,7 @@ const busModel=require('../models/business')
 class auth{
     createToken(data){
         return new Promise((res, rej)=>{
-            jwt.sign(data, process.env.JWT_SECRET, (err, token_value)=>{
+            jwt.sign(data, process.env.JWT_SECRET, {expiresIn:'72h'}, (err, token_value)=>{
                 if(err)rej(err)
                 res(token_value);
             })
