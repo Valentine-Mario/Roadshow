@@ -22,6 +22,8 @@ var employeeRouter=require('./routes/employee')
 var businessreceiptRouter=require('./routes/business-receipt')
 var businessbookingRouter=require('./routes/business-bookings')
 var approvalRouter=require('./routes/approval')
+var inviteRouter=require('./routes/invite')
+
 var bodyParser = require('body-parser')
 var googleSetUp= require('./setup')
 require('dotenv').config()
@@ -37,7 +39,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
+var exphbs  = require('express-handlebars');
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -66,6 +68,16 @@ var options = {
 app.use(timeout.handler(options));
  
 
+// view engine setup
+
+var hbs = exphbs.create({ /* config */ });
+
+// Register `hbs.engine` with the Express app.
+app.engine('.hbs', exphbs({ extname: '.hbs', defaultLayout:false }));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', '.hbs');
+
+//routing
 app.use('/bizbookin', approvalRouter)
 app.use('/businessbooking', businessbookingRouter)
 app.use('/businessreceipt', businessreceiptRouter)
@@ -84,6 +96,7 @@ app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
 app.use('/business', businessRouter)
+app.use('/invite', inviteRouter)
 
 module.exports = app;
 

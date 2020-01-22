@@ -18,7 +18,7 @@ class mailer{
             var mailTemplate  = `<div>
             Welcome to sprinttrip
             ${user}<br/>
-            <a href="https://rocky-mesa-69765.herokuapp.com/${user_acc}/approve?token=${tempLink}">Click</a> to approve account
+            <a href="http://localhost:7000/${user_acc}/approve?token=${tempLink}">Click</a> to approve account
             <br/>
             link expires after 1 day
             </div>`
@@ -36,6 +36,28 @@ class mailer{
                 }
               });
         
+    }
+
+    inviteEmail(email, token, subject, user){
+        var mailTemplate  = `<div>
+       Invite link by ${user}
+        <a href="http://localhost:7000/invite/approve?token=${token}&email=${email}">Click</a> To create account
+        <br/>
+        link expires after 24 hours
+        </div>`
+        var mailOptions = {
+            from: '"Sprintrip"',
+            to: email,
+            subject: subject,
+            html: `${mailTemplate}`
+          };
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error, false)
+            } else {
+                console.log(true)
+            }
+          });
     }
 
     pdf_email(user){

@@ -16,7 +16,6 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://rocky-mesa-69765.herokuapp.com"+"/user/google"
   },
   function(accessToken, refreshToken, profile, done) {
-   
         User.findOne({auth_id: profile.id}, (err, user_value)=>{
             if(user_value!==null){
                 
@@ -30,12 +29,14 @@ passport.use(new GoogleStrategy({
                     verified:true,
                     access:0,
                     date_created:Date.now(),
-                    
+                    pics:profile.photos[0].value,
+                    account_type:'Personal',               
                 }
                 User.create(data, (err, user_details)=>{
                     if(err){
                         if (err.name === 'MongoError' && err.code === 11000) {
                             done(null)
+                            
                           }
                     }else{
                         done(null, user_details._id)

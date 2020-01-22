@@ -2,7 +2,7 @@ const userModel= require('../models/user');
 const auth_user=require('../helpers/auth')
 const mail=require('../helpers/mail')
 const hasher=require('../helpers/password-bcrypt')
-
+const inviteModel=require('../models/invited_user')
 
 exports.addGoogleUser=(req, res)=>{
     try{
@@ -26,15 +26,16 @@ exports.addUser=(req, res)=>{
     email:req.body.email,
     password:req.body.password,
     auth_id:null,
-    date_created:Date.now()
+    date_created:Date.now(),
+    account_type:req.body.account_type,
     }
     try{
         if(data.password.length<6){
-            res.json({code:"01", message:"password must be at least 6 characters"})
+            res.status(203).json({code:"01", message:"password must be at least 6 characters"})
         }else{
             userModel.findOne({email: data.email}, (err, email_value)=>{
                 if(email_value!==null){
-                    res.json({code:"01", message:"email already exist choose a new email"})
+                    res.status(203).json({code:"01", message:"email already exist choose a new email"})
                 }else{
                     hasher.hash_password(data.password).then(hashed=>{
                         data.password=hashed
@@ -42,7 +43,7 @@ exports.addUser=(req, res)=>{
                             user=user_details._id
                             auth_user.mailerToken({user}).then(token=>{
                                 mail.signup(user_details.email, "Welcome", user_details.name, token, 'user')
-                                    res.json({code:"00", message:"approval mail sent"})
+                                    res.status(200).json({code:"00", message:"approval mail sent"})
                                  
                             })
                             
@@ -53,6 +54,7 @@ exports.addUser=(req, res)=>{
         }
     }catch(e){
         console.log(e)
+        res.status(500)
     }
 }
 
@@ -64,12 +66,40 @@ exports.approveEmail=(req, res)=>{
     try{
         auth_user.verifyTokenMail(token).then(user_value=>{
             userModel.findByIdAndUpdate(user_value._id, data, (err)=>{
-                if(err)res.json({code:"01", err:err, message:"error approving account, try again"})
-                res.json({code:"00", message:"account approved successfully"})
+                if(err)res.status(501).json({code:"01", err:err, message:"error approving account, try again"})
+                res.status(200).render('welcome', { title: 'Strint Trip', message:"Welcome to Sprintrip, account verified" });
             })
         })
     }catch(e){
         console.log(e)
+        res.status(500)
+    }
+}
+
+
+exports.sendInvite=(req, res)=>{
+    var data={
+       email: req.body.email
+    }
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            inviteModel.find({email:data.email}, (err, value)=>{
+                if(value!==null){
+                    //store name to be used later
+                    name=user.name
+                    user=user.id
+                    auth_user.mailerToken({user}).then(token=>{
+                        mail.inviteEmail(data.email, token, `invite to Sprint Trip by ${name}`, name) 
+                        res.status(200).json({code:"00", message:"invite sent successfully"})
+                    })
+                }else{
+                    res.status(203).json({code:"01", message:"this email is already registered under you"})
+                }
+            })
+
+        })
+    }catch(e){
+        res.status(500)
     }
 }
 
@@ -228,135 +258,3 @@ exports.requestPdf=(req, res)=>{
     }
 }
 
-exports.setHotel=(req, res)=>{
-    var data={
-        hotel_price_spec:req.body.hotel_price_spec,
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-    }catch(e){
-        console.log(e)
-    }
-
-
-}
-
-exports.resetHotel=(req, res)=>{
-    var data={
-        hotel_price_spec:0,
-    }
-    try{
-            auth_user.verifyToken(req.token).then(user=>{
-                userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                    if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                    res.status(200).json({code:"00", message:"details modified successfully"})
-                })
-            })
-       
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.setVenue=(req, res)=>{
-    var data={
-        venue_price_spec:req.body.venue_price_spec
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-            
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.resetVenue=(req, res)=>{
-    var data={
-        venue_price_spec:0
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.setCar=(req, res)=>{
-    var data={
-        car_price_spec:req.body.car_price_spec
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.resetCar=(req, res)=>{
-    var data={
-        car_price_spec:0
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-        
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.setFlight=(req, res)=>{
-    var data={
-    fligh_price_perk:req.body.fligh_price_perk
-    }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
-
-exports.resetFlight=(req, res)=>{
-    var data={
-        fligh_price_perk:0
-            }
-    try{
-        auth_user.verifyToken(req.token).then(user=>{
-            userModel.findByIdAndUpdate(user._id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error modifying details"})
-                res.status(200).json({code:"00", message:"details modified successfully"})
-            })
-        })
-    }catch(e){
-        console.log(e)
-    }
-}
