@@ -2,6 +2,8 @@ require('dotenv').config()
 const jwt=require('jsonwebtoken')
 const usrModel=require('../models/user')
 const busModel=require('../models/business')
+const inviteModel=require('../models/invited_user')
+
 class auth{
     createToken(data){
         return new Promise((res, rej)=>{
@@ -27,13 +29,13 @@ class auth{
         })
     }
 
-    verifyBusinessToken(data){
+    verifyInviteToken(data){
         return new Promise((res, rej)=>{
             jwt.verify(data, process.env.JWT_SECRET, (err, decoded_token)=>{
                 if(err){
                     rej(err)
                 }else{
-                    busModel.findById(decoded_token.biz, (err, business)=>{
+                    inviteModel.findById(decoded_token.user, (err, business)=>{
                         if(err)rej(err)
                         res(business)
                     })

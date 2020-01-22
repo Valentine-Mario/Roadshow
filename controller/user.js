@@ -83,20 +83,31 @@ exports.sendInvite=(req, res)=>{
     }
     try{
         auth_user.verifyToken(req.token).then(user=>{
-            inviteModel.find({email:data.email}, (err, value)=>{
-                if(value!==null){
-                    //store name to be used later
-                    name=user.name
-                    user=user.id
-                    auth_user.mailerToken({user}).then(token=>{
-                        mail.inviteEmail(data.email, token, `invite to Sprint Trip by ${name}`, name) 
-                        res.status(200).json({code:"00", message:"invite sent successfully"})
-                    })
-                }else{
-                    res.status(203).json({code:"01", message:"this email is already registered under you"})
-                }
-            })
-
+            if(user.account_type!=="Business"){
+                res.status(203).json({code:"01", message:"this account type is unathorised to send out invites"})
+            }else{
+                userModel.find({email:data.email}, (err, val)=>{
+                    if(val.length>0){
+                        res.status(201).json({code:"01", message:"email already exist"})
+                    }else{
+                        inviteModel.find({email:data.email}, (err, value)=>{
+               
+                            if(value.length<1){
+                                //store name to be used later
+                                name=user.name
+                                user=user.id
+                                auth_user.mailerToken({user}).then(token=>{
+                                    mail.inviteEmail(data.email, token, `invite to Sprint Trip by ${name}`, name) 
+                                    res.status(200).json({code:"00", message:"invite sent successfully"})
+                                })
+                            }else{
+                                res.status(203).json({code:"01", message:"this email is already registered"})
+                            }
+                        })
+                    }
+                })
+                
+            }
         })
     }catch(e){
         res.status(500)
@@ -109,32 +120,53 @@ exports.login=(req, res)=>{
         password:req.body.password
     }
     try{
+        //check if email exist in regular user
         userModel.findOne({email:data.email}, (err, user)=>{
-            if(user){
-               if(user.password==null){
-                    res.json({code:"01", message:"please login with google"})
-               }else{
-                hasher.compare_password(data.password, user.password).then(value=>{
-                     
-                    if(value){
-                        if(user.verified==false){
-                            res.json({code:"01", message:"please verify email before you log in"})
-                        }else{
-                            user=user._id
-                            auth_user.createToken({user}).then(token=>{
-                                res.json({code:"00", message:token})
-                            })
-                        }
-                        
-            }
-            else{
-                res.json({code:"01", message:"invalid password"})
-            }
-                })  
-               } 
-    } else{
-                res.json({code:"01", message:"this email dosen't exist"});
-            }
+            //check if it exist on invited user
+            inviteModel.findOne({email:data.email}, (err, invited_user)=>{
+                if(user){
+                    if(user.password==null){
+                         res.json({code:"01", message:"please login with google"})
+                    }else{
+                     hasher.compare_password(data.password, user.password).then(value=>{
+                          
+                         if(value){
+                             if(user.verified==false){
+                                 res.json({code:"01", message:"please verify email before you log in"})
+                             }else{
+                                 user=user._id
+                                 auth_user.createToken({user}).then(token=>{
+                                     res.status(200).json({code:"00", message:token})
+                                 })
+                             }      
+                 }
+                 else{
+                     res.json({code:"01", message:"invalid password"})
+                 }
+                     })  
+                    } 
+         } else if(invited_user){ 
+                    hasher.compare_password(data.password, invited_user.password).then(value=>{    
+                        if(value){ 
+                                user=invited_user._id
+                                auth_user.createToken({user}).then(token=>{
+                                    user=invited_user.user
+                                    auth_user.createToken({user}).then(token2=>{
+                                        //send inited user token and user token
+                                        res.status(200).json({code:"00", message:token, biz_acc_token:token2})
+                                    })
+                                })               
+                }
+                else{
+                    res.json({code:"01", message:"invalid password"})
+                }
+                    })  
+                
+                 }else{
+                    res.status(201).json({code:"01", message:"this email dosen't exist"});
+                 }
+            })
+           
         })
     }catch(e){
         console.log(e)
@@ -144,10 +176,10 @@ exports.login=(req, res)=>{
   exports.getProfile=(req, res)=>{
       try{
         auth_user.verifyToken(req.token).then(decoded_user=>{
-            res.json({code:"00", message:decoded_user})
+            res.status(200).json({code:"00", message:decoded_user})
         })
       }catch(e){
-          console.log(e)
+          res.status(500)
       }
   }
 
