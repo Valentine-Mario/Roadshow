@@ -16,30 +16,17 @@ exports.addReview=(req, res)=>{
             data.user=user._id
             data.hotel=id
             if(parseInt(data.rating)>10||parseInt(data.rating)<1){
-                res.json({code:"01", message:"please enter a valid rating"})
+                res.status(201).json({code:"01", message:"please enter a valid rating"})
             }else{
                 reviewModel.create(data, (err, review)=>{
-                    hotelModel.findById(id, (err, hotel)=>{
-                        hotel.rates.push(parseInt(review.rating))
-                        hotel.save()
-                        var sum=hotel.rates.reduce(function(a,b){
-                            return a+b
-                        })
-                        mean=parseInt(sum)/parseInt(hotel.rates.length)
-                        meanVal=mean.toFixed(2)
-                        var update_data={
-                            rate_value:meanVal
-                        }
-                        hotelModel.findByIdAndUpdate(id, update_data, (err)=>{
-                            if(err)res.json({code:"01", message:"error adding reviews"})
-                            res.json({code:"00", message:review})
-                        })
-                    })
+                    if(err)res.status(501).json({code:"01", message:"error adding reviews"})
+                    res.status(200).json({code:"00", message:review})
+                    
                 })
             }
         })
     }catch(e){
-        console.log(e)
+       res.status(500)
     }
 }
 
@@ -56,10 +43,20 @@ exports.getReviews=(req, res)=>{
 }
     try{
         reviewModel.paginate({hotel:id._id}, options, (err, value)=>{
-            if(err)res.json({code:"01", message:"error getting review"})
-            res.json({code:"00", message:value})
+
+             //calculate the average of all rating
+             reviewModel.find({hotel:id._id}, (err, allRatins)=>{
+                let ratings_result = allRatins.map(a => a.rating);
+                var sum=ratings_result.reduce(function(a,b){
+                         return a+b
+              })
+                mean=parseInt(sum)/parseInt( ratings_result.length)
+                meanVal=mean.toFixed(2)
+                if(err)res.status(501).json({code:"01", message:"error getting review"})
+                res.status(200).json({code:"00", message:value, rating:meanVal})
+            })
         })
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
 }

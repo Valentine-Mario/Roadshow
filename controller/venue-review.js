@@ -20,27 +20,13 @@ exports.addReview=(req, res)=>{
                 res.json({code:"01", message:"please enter a valid rating"})
             }else{
                 reviewModel.create(data, (err, review)=>{
-                    venueModel.findById(id, (err, venue)=>{
-                        venue.rates.push(parseInt(review.rating))
-                        venue.save()
-                        var sum=venue.rates.reduce(function(a,b){
-                            return a+b
-                        })
-                        mean=parseInt(sum)/parseInt(venue.rates.length)
-                        meanVal=mean.toFixed(2)
-                        var update_data={
-                            rate_value:meanVal
-                        }
-                        venueModel.findByIdAndUpdate(id, update_data, (err)=>{
-                            if(err)res.json({code:"01", message:"error adding reviews"})
-                            res.json({code:"00", message:review})
-                        })
-                    })
+                    if(err)res.status(501).json({code:"01", message:"error adding reviews"})
+                    res.status(200).json({code:"00", message:review})
                 })
             }
         })
     }catch(e){
-        console.log(e)
+       res.status(500)
     }
 }
 
@@ -56,10 +42,20 @@ exports.getReviews=(req, res)=>{
 }
     try{
         reviewModel.paginate({venue:id._id}, options, (err, value)=>{
-            if(err)res.json({code:"01", message:"error getting review"})
-            res.json({code:"00", message:value})
+
+            //calculate the average of all rating
+            reviewModel.find({venue:id._id}, (err, allRatins)=>{
+                let ratings_result = allRatins.map(a => a.rating);
+                var sum=ratings_result.reduce(function(a,b){
+                         return a+b
+              })
+                mean=parseInt(sum)/parseInt( ratings_result.length)
+                meanVal=mean.toFixed(2)
+                if(err)res.status(501).json({code:"01", message:"error getting review"})
+                res.status(200).json({code:"00", message:value, rating:meanVal})
+            })
         })
     }catch(e){
-        console.log(e)
+       res.status(500)
     }
 }

@@ -47,7 +47,7 @@ exports.getReviews=(req, res)=>{
               })
                 mean=parseInt(sum)/parseInt( ratings_result.length)
                 meanVal=mean.toFixed(2)
-                if(err)res.status(201).json({code:"01", message:"error getting review"})
+                if(err)res.status(501).json({code:"01", message:"error getting review"})
                 res.status(200).json({code:"00", message:value, rating:meanVal})
             })
             
