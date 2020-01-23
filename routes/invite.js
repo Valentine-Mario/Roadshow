@@ -8,5 +8,8 @@ router.get('/approve',  invite.acceptLink)
 router.post('/approved',  invite.accept);
 router.get('/delete/:id', verification.verifyToken, invite.deleteInvitedUser)
 router.get('/get', verification.verifyToken, invite.getInvitedUser)
+router.post('/edit', verification.verifyToken, invite.modifyInvitedUser)
+router.post('/editsetting/:id', verification.verifyToken, invite.modifyInvitedUserAccess)
+router.get('/getone/:id', invite.getInvitedUserById)
 
 module.exports = router;

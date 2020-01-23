@@ -28,7 +28,7 @@ class Receipts{
                             data.date=year + '-' + month + '-' + day;
                             
                             receiptModel.create(data, (err, receipt)=>{
-                                if(err)res.status(503).json({err:err, message:"error adding recepits"})
+                                if(err)res.status(501).json({err:err, message:"error adding recepits"})
                                 res.status(200).json({code:"00", message:receipt})
                             })
                         }
@@ -39,7 +39,7 @@ class Receipts{
             })
            
         }catch(e){
-            console.log(e)
+            res.status(500)
         }
     }
 
@@ -54,7 +54,7 @@ class Receipts{
                 receiptModel.findById(id, (err, receipt)=>{
                     if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
                        
-                         res.status(503).json({code:"01", message:"unauthorised to add images"})
+                         res.status(201).json({code:"01", message:"unauthorised to add images"})
                     }else{
                        
                         for(var i=0; i<data.images.length; i++){
@@ -76,7 +76,7 @@ class Receipts{
             })
             
         }catch(e){
-            console.log(e)
+            res.status(500)
         }
     }
 
@@ -89,7 +89,7 @@ class Receipts{
             auth_user.verifyToken(req.token).then(user=>{
                 receiptModel.findById(id, (err, receipt)=>{
                     if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
-                        res.status(503).json({code:"01", message:"unauthorised to edit details"})
+                        res.status(201).json({code:"01", message:"unauthorised to edit details"})
                     }else{
                         receiptModel.findByIdAndUpdate(id, data, (err)=>{
                             if(err)res.status(501).json({code:"01", message:"error editing details"})
@@ -99,7 +99,7 @@ class Receipts{
                 })
             })
         }catch(e){
-            console.log(e)
+           res.status(500)
         }
     }
 
@@ -112,59 +112,62 @@ class Receipts{
        auth_user.verifyToken(req.token).then(user=>{
         receiptModel.findById(id, (err, receipt)=>{
             if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
-                res.status(503).json({code:"01", message:"unauthorised to edit details"})
+                res.status(201).json({code:"01", message:"unauthorised to remove image"})
             }else{
                 if(receipt.images.includes(data.images)){
-                    var index= receipt.images.indexOf(data.images)
-                    receipt.images.splice(index, 1)
+                    receipt.images.splice(receipt.images.indexOf(data.images), 1)
                     receipt.save()
-                    res.json({code:"00", message:"image successfully removed"})
+                    res.status(200).json({code:"00", message:"image successfully removed"})
                     }else{
-                        res.json({code:"01", message:"image not found"})
+                        res.status(201).json({code:"01", message:"image not found"})
                     }
             }
         })
        })
         
       }catch(e){
-          console.log(e)
+          res.status(500)
       }
     }
+
+
     removeReceipt(req, res){
         var id={_id:req.params.id}
         try{
             auth_user.verifyToken(req.token).then(user=>{
                 receiptModel.findById(id, (err, receipt)=>{
                     if(JSON.stringify(receipt.user)!== JSON.stringify(user._id)){
-                        res.status(503).json({code:"01", message:"unauthorised to delete details"})
+                        res.status(201).json({code:"01", message:"unauthorised to delete receipt"})
                     }else{
                         receiptModel.findByIdAndDelete(id, (err)=>{
-                            if(err)res.status(503).json({code:"01", message:"error deleting details"})
-                            res.status(200).json({code:"00", message:"details deleted successfully"})
+                            if(err)res.status(501).json({code:"01", message:"error deleting receipt"})
+                            res.status(200).json({code:"00", message:"receipt deleted successfully"})
                         })
                     }
                 })
             })   
         }catch(e){
-            console.log(e)
+            res.status(500)
         }
     }
+
+
     getReceipt(req, res){
         var {page, limit,}= req.query;
         var options={
         page:parseInt(page, 10) || 1,
-        limit:parseInt(limit, 10) || 10,
+        limit:parseInt(limit, 10) || 15,
         sort:{'_id':-1}
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
                 receiptModel.paginate({user:user._id}, options, (err, receipt)=>{
-                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                    if(err)res.status(501).json({code:"01", err:err, message:"error getting details"})
                     res.status(200).json({code:"00", message:receipt})
                 })
             })
         }catch(e){
-            console.log(e)
+            res.status(500)
         }
         
     }
@@ -172,26 +175,53 @@ class Receipts{
         var id={_id:req.params.id}
         try{
             receiptModel.findById(id, (err, receipt)=>{
-                if(err)res.status(503).json({code:"01", message:"error getting receipt"})
+                if(err)res.status(501).json({code:"01", message:"error getting receipt"})
                 res.status(200).json({code:"00", message:receipt})
             })
         }catch(e){
-            console.log(e)
+           res.status(500)
         }
     }
     getRceiptByDay(req, res){
         var data={
-            date:req.body.date
+            date:req.params.date
         }
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 15,
+            sort:{'_id':-1}
+    }
         try{
             auth_user.verifyToken(req.token).then(user=>{
-                receiptModel.find({$and:[{user:user._id}, {date:data.date}]}, (err, receipt)=>{
-                    if(err)res.status(503).json({code:"01", err:err, message:"error getting details"})
+                receiptModel.paginate({$and:[{user:user._id}, {date:data.date}]}, options, (err, receipt)=>{
+                    if(err)res.status(501).json({code:"01", err:err, message:"error getting details"})
                     res.status(200).json({code:"00", message:receipt})
                 })
             })
         }catch(e){
-            console.log(e)
+            res.status(500)
+        }
+    }
+
+    getReceiptByLocation(req, res){
+       
+        var value= req.params.value;
+        var {page, limit,}= req.query;
+        var options={
+            page:parseInt(page, 10) || 1,
+            limit:parseInt(limit, 10) || 15,
+            sort:{'_id':-1}
+    }
+        try{
+            auth_user.verifyToken(req.token).then(user=>{
+                receiptModel.paginate({$and:[{user:user._id}, {"location":{$regex: value, $options: 'gi'}}]}, options, (err, receipt)=>{
+                    if(err) res.status(501).json({code:"01", message:"error getting search result"})
+                    res.status(200).json({code:"00", message:receipt})
+                })
+            })
+        }catch(e){
+            res.status(500)
         }
     }
 }

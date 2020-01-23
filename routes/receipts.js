@@ -20,6 +20,7 @@ router.post('/removeimage/:id', verification.verifyToken, receiptController.remo
 router.get('/delete/:id', verification.verifyToken, receiptController.removeReceipt)
 router.get('/get', verification.verifyToken, receiptController.getReceipt)
 router.get('/get/:id', receiptController.getReceiptById)
-router.post('/getbydate', verification.verifyToken, receiptController.getRceiptByDay)
+router.get('/getbydate/:date', verification.verifyToken, receiptController.getRceiptByDay)
+router.get('/getbylocation/:value', verification.verifyToken, receiptController.getReceiptByLocation)
 
 module.exports = router;

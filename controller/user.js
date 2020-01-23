@@ -161,7 +161,6 @@ exports.login=(req, res)=>{
                     res.json({code:"01", message:"invalid password"})
                 }
                     })  
-                
                  }else{
                     res.status(201).json({code:"01", message:"this email dosen't exist"});
                  }
@@ -169,7 +168,7 @@ exports.login=(req, res)=>{
            
         })
     }catch(e){
-        console.log(e)
+       res.status(500)
     }
   }
 
@@ -235,20 +234,34 @@ exports.login=(req, res)=>{
         })
     
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
   }
 
   exports.deleteAccount=(req, res)=>{
     try{
                 auth_user.verifyToken(req.token).then(user=>{
-                    userModel.findByIdAndRemove(user._id, (err)=>{
-                        if(err)res.json({code:"01", message:"error deleting account"})
-                        res.json({code:"00", message:"account deleted successfully"})
+                    //todo: make this delete function run as a job
+                    //store deleted user id to be used later
+                    deleted_user_id=user._id
+                    userModel.findByIdAndDelete(user._id, (err)=>{
+                       
+                        if(err){
+                            res.json({code:"01", message:"error deleting account"})
+                        }else{
+                            res.json({code:"00", message:"account deleted successfully"})
+                            inviteModel.find({user:deleted_user_id}, (err, invitedUser)=>{
+                                for (const a of invitedUser) {
+                                    inviteModel.findByIdAndDelete(a._id, (err)=>{
+                                        //do nothing
+                                    })
+                                }
+                            })
+                        }
                     })
                 })
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
   }
 
@@ -274,7 +287,7 @@ exports.login=(req, res)=>{
             }
         })
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
 }
 
@@ -286,7 +299,7 @@ exports.requestPdf=(req, res)=>{
         })
                 
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
 }
 

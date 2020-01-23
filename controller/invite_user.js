@@ -82,6 +82,58 @@ class Invite{
             res.status(500)
         }
     }
+    modifyInvitedUser(req, res){
+        var data={
+            name:req.body.name
+        }
+        try{
+            auth.verifyInviteToken(req.token).then(user=>{
+                inviteModel.findByIdAndUpdate(user._id, data, (err)=>{
+                    if(err) res.status(501).json({code:"01", message:"error modifying user"})
+                    res.status(200).json({code:"00", message:"update successful"})
+                })
+            })
+        }catch(e){
+            res.status(500)
+        }
+    }
+
+    modifyInvitedUserAccess(req, res){
+        var data={
+            limit:req.body.limit,
+            limit_amount:req.body.limit_amount,
+        }
+        var id={_id:req.params.id}
+        try{
+            auth.verifyToken(req.token).then(user=>{
+                inviteModel.findById(id, (err, invitedUser)=>{
+                    if(JSON.stringify(user.id)!== JSON.stringify(invitedUser.user)){
+                        res.status(201).json({code:"01", message:"unauthorized to modify user setting"})
+                    }else{
+                        inviteModel.findByIdAndUpdate(id, data, (err)=>{
+                            if(err) res.status(501).json({code:"01", message:"error making update to user"})
+                            res.status(200).json({code:"00", message:"update made successfully"})
+                            
+                        })
+                    }
+                })
+            })
+        }catch(e){
+            res.status(500)
+        }
+    }
+
+    getInvitedUserById(req, res){
+        var id={_id:req.params.id}
+        try{
+            inviteModel.findById(id, (err, user)=>{
+                if(err) res.status(501).json({code:"01", message:"error getting user"})
+                res.status(200).json({code:"00", message:user})
+            })
+        }catch(e){
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Invite();
