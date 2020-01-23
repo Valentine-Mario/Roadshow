@@ -610,7 +610,7 @@ exports.getAllUpcomingBookings=(req, res)=>{
 }
     try{
         auth_user.verifyToken(req.token).then(user=>{
-            BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$gte: new Date()}}]}, options, (err, booking)=>{
+            BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$gte: new Date()}}, {"start_date":{$gte:new Date()}}]}, options, (err, booking)=>{
                 if(err) res.status(501).json({code:"01", message:"error retriving data"})
                 res.status(200).json({code:"00", message:booking})
             })
@@ -633,7 +633,7 @@ exports.getAllPastTrips=(req, res)=>{
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
-                BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$lte: new Date()}}]}, options, (err, booking)=>{
+                BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$lte: new Date()}}, {"start_date":{$lte: new Date()}}]}, options, (err, booking)=>{
                     if(err) res.status(501).json({code:"01", message:"error retriving data"})
                     res.status(200).json({code:"00", message:booking})
                 })
