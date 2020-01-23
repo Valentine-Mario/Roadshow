@@ -9,11 +9,15 @@ router.post('/addhotelnonuser/:id', bookingController.addHotelBooking_nonUser)
 router.post('/addhotelinviteduser/:id', verification.verifyToken, bookingController.addHotelBookingInvitedUser)
 router.post('/addcaruser/:id', verification.verifyToken, bookingController.addCarBooking)
 router.post('/addcarnonuser/:id', bookingController.addCarBooking_nonUser)
+router.post('/addcarinviteduser/:id', verification.verifyToken, bookingController.addCarBookingInvitedUser)
 router.post('/addvenueuser/:id', verification.verifyToken, bookingController.addVenueBooking)
 router.post('/addvenuenonuser/:id', bookingController.addVenueBooking_nonUser)
+router.post('/addvenueinviteduser/:id', verification.verifyToken, bookingController.addVenueBookingInvitedUser)
 router.post('/addflightuser/:id', verification.verifyToken, bookingController.addFlight)
 router.post('/addflightnonuser/:id', bookingController.addFlight_nonUser)
-router.post('/remove', verification.verifyToken, bookingController.removeBooking)
-router.get('/get', verification.verifyToken, bookingController.getAllBookings)
+router.post('/addflightinviteduser/:id', verification.verifyToken, bookingController.addFlightBookingInvitedUser)
+router.get('/getupcoming', verification.verifyToken, bookingController.getAllUpcomingBookings)
+router.get('/getpasttrips', verification.verifyToken, bookingController.getAllPastTrips)
+router.get('/getcurrenttrips', verification.verifyToken, bookingController.getAllCurrentTrips);
 
 module.exports = router;
