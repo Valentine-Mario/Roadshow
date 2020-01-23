@@ -6,6 +6,7 @@ const verification= require('../verification/verification')
 
 router.post('/addhoteluser/:id', verification.verifyToken, bookingController.addHotelBooking)
 router.post('/addhotelnonuser/:id', bookingController.addHotelBooking_nonUser)
+router.post('/addhotelinviteduser/:id', verification.verifyToken, bookingController.addHotelBookingInvitedUser)
 router.post('/addcaruser/:id', verification.verifyToken, bookingController.addCarBooking)
 router.post('/addcarnonuser/:id', bookingController.addCarBooking_nonUser)
 router.post('/addvenueuser/:id', verification.verifyToken, bookingController.addVenueBooking)

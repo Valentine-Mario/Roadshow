@@ -11,6 +11,7 @@ const HotelBookingModel=require('../models/hotel-booking')
 const carBookingModel=require('../models/car-booking')
 const venueBookingModel=require('../models/venue-booking')
 const auth_user=require('../helpers/auth')
+const BookingModel=require('../models/user-booking')
 
 exports.addHotelBooking=(req, res)=>{
     var data={
@@ -23,6 +24,12 @@ exports.addHotelBooking=(req, res)=>{
         roomType:'',
         user:'',
         no_of_rooms:req.body.no_of_rooms,
+        car_id:null,
+        quantity:'-',
+        venue_id:null,
+        flight_id:null, 
+        no_of_people:'-',
+        pending:true
     }
     var id={_id:req.params.id}
     try{
@@ -36,25 +43,16 @@ exports.addHotelBooking=(req, res)=>{
                         roomModel.findById(id, (err, room)=>{
                             data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
                             var room_price=room.price.replace(/^\D+/g, '')
-                            data.price=parseInt(room_price)*data.duration*parseInt(data.no_of_rooms);
-                            var obj={
-                                type:'Hotel',
-                                details:`Hotel at ${hotel[0].name} located at ${hotel[0].location}, 
-                                price is ${data.price} duration is ${data.duration} in days
-                                room type is ${room.type} at the price of $ ${data.price}`,
-                                start_date:data.start_date,
-                                end_date:data.end_date 
-                            }
-                            data.hotel_id=hotel[0]._id;
                             
+                            data.price=parseInt(room_price)*parseInt(data.duration)*parseInt(data.no_of_rooms);
+                            data.hotel_id=hotel[0]._id;
                             data.roomType=room.type
                             data.user=user._id
-                            HotelBookingModel.create(data, (err, hotelBooking)=>{
+                            BookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.status(401).json({code:"01", err:err, message:"error creating booking"})
+                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
-                                    user.activity.push(obj);
-                                    user.save();
+                                   
                                     res.status(200).json({code:"00", message:"hotel booking created successfully"})
                                 }
                             })
@@ -66,7 +64,7 @@ exports.addHotelBooking=(req, res)=>{
            
         
     }catch(e){
-        console.log(e)
+        res.status(500)
     }
 }
 
@@ -79,8 +77,14 @@ exports.addHotelBooking_nonUser=(req, res)=>{
         hotel_id:'',
         price:'',
         roomType:'',
-        user:null,
+        user:'',
         no_of_rooms:req.body.no_of_rooms,
+        car_id:null,
+        quantity:'-',
+        venue_id:null,
+        flight_id:null, 
+        no_of_people:'-',
+        pending:true
     }
     var id={_id:req.params.id}
     try{
@@ -92,10 +96,10 @@ exports.addHotelBooking_nonUser=(req, res)=>{
                             data.price=parseInt(room_price)*data.duration*parseInt(data.no_of_rooms);
                             data.hotel_id=hotel[0]._id;
                             data.roomType=room.type
-                            data.user=user._id
-                            HotelBookingModel.create(data, (err, hotelBooking)=>{
+                            data.user=null
+                            BookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.status(401).json({code:"01", err:err, message:"error creating booking"})
+                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
                                     
                                     res.status(200).json({code:"00", message:"hotel booking created successfully"})
@@ -104,7 +108,69 @@ exports.addHotelBooking_nonUser=(req, res)=>{
                         })
                     })
     }catch(e){
-        console.log(e)
+       res.status(500)
+    }
+}
+
+exports.addHotelBookingInvitedUser=(req, res)=>{
+    var data={
+        type:'Hotel',
+        start_date:new Date(req.body.start_date),
+        end_date:new Date(req.body.end_date),
+        duration:0,
+        hotel_id:'',
+        price:'',
+        roomType:'',
+        user:'',
+        no_of_rooms:req.body.no_of_rooms,
+        car_id:null,
+        quantity:'-',
+        venue_id:null,
+        flight_id:null, 
+        no_of_people:'-',
+        pending:''
+    }
+    var id={_id:req.params.id}
+    try{
+        auth_user.verifyInviteToken(req.token).then(decoded_user=>{
+            userModel.findById(decoded_user.user, (err, user)=>{
+                if(err){
+                    res.json({code:"01", message:"error getting user information"})
+                }else{
+                    hotelModel.find({rooms:id._id}, (err, hotel)=>{
+                        
+                        roomModel.findById(id, (err, room)=>{
+                            
+                            data.duration=parseInt((data.end_date-data.start_date)/(1000*60*60*24))+1
+                            var room_price=room.price.replace(/^\D+/g, '')
+                            
+                            data.price=parseInt(room_price)*parseInt(data.duration)*parseInt(data.no_of_rooms);
+                            data.hotel_id=hotel[0]._id;
+                            data.roomType=room.type
+                            data.user=user._id
+                            if(decoded_user.limit==='No'){
+                                data.pending=false
+                               
+                            }else if(decoded_user.limit==='Yes'){
+                                data.pending=true
+                            }else{
+                                data.price>decoded_user.limit_amount ?data.pending=true:data.pending=false
+                            }
+                            BookingModel.create(data, (err, hotelBooking)=>{
+                                if(err){
+                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                                }else{
+                                   
+                                    res.status(200).json({code:"00", message:"hotel booking created successfully"})
+                                }
+                            })
+                        })
+                    })
+                }
+            })
+        })
+    }catch(e){
+        res.status(500)
     }
 }
 
