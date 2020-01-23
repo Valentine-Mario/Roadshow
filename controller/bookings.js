@@ -602,13 +602,10 @@ exports.getAllUpcomingBookings=(req, res)=>{
         page:parseInt(page, 10) || 1,
         limit:parseInt(limit, 10) || 15,
         sort:{'_id':-1},
-        populate:'venue_id',
-        populate:'hotel_id',
-        populate:{path:'flight_id',
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } },
-        path:'car_id'
+        } }]
 
 }
     try{
@@ -629,13 +626,10 @@ exports.getAllPastTrips=(req, res)=>{
         page:parseInt(page, 10) || 1,
         limit:parseInt(limit, 10) || 15,
         sort:{'_id':-1},
-        populate:'venue_id',
-        populate:'hotel_id',
-        populate:{path:'flight_id',
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } },
-        path:'car_id'
+        } }]
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
@@ -655,17 +649,14 @@ exports.getAllCurrentTrips=(req, res)=>{
         page:parseInt(page, 10) || 1,
         limit:parseInt(limit, 10) || 15,
         sort:{'_id':-1},
-        populate:'venue_id',
-        populate:'hotel_id',
-        populate:{path:'flight_id',
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } },
-        path:'car_id'
+        } }]
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
-                BookingModel.paginate({$and:[{user:user.id}, {end_date:new Date()}]}, options, (err, booking)=>{
+                BookingModel.paginate({$and:[{user:user.id}, {"start_date":{$lte: new Date()}}, {"end_date":{$gte:new Date()}}]}, options, (err, booking)=>{
                     if(err) res.status(501).json({code:"01", message:"error retriving data"})
                     res.status(200).json({code:"00", message:booking})
                 })
