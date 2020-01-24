@@ -19,5 +19,9 @@ router.post('/addflightinviteduser/:id', verification.verifyToken, bookingContro
 router.get('/getupcoming', verification.verifyToken, bookingController.getAllUpcomingBookings)
 router.get('/getpasttrips', verification.verifyToken, bookingController.getAllPastTrips)
 router.get('/getcurrenttrips', verification.verifyToken, bookingController.getAllCurrentTrips);
+router.get('/getpendingtrips', verification.verifyToken, bookingController.getAllPendingTrips)
+router.get('/getdeclinedtrips', verification.verifyToken, bookingController.getAllDeclinedTrips)
+router.get('/getapprovedtrips', verification.verifyToken, bookingController.getAllAprovedTrips)
+router.get('/gettriptype/:value', verification.verifyToken, bookingController.getBookingType)
 
 module.exports = router;

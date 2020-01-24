@@ -665,3 +665,96 @@ exports.getAllCurrentTrips=(req, res)=>{
             res.status(500)
         }
 }
+
+exports.getAllPendingTrips=(req, res)=>{
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 15,
+        sort:{'_id':-1},
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
+        populate:{
+            path:'airline'
+        } }]
+}
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            BookingModel.paginate({$and:[{user:user.id}, {pending:true}]}, options, (err, trips)=>{
+                if(err)res.status(501).json({code:"01", message:"error retriving pending trips"})
+                res.status(200).json({code:"00", message:trips})
+            })
+        })
+    }catch(e){
+        res.status(500)
+    }
+}
+
+exports.getAllDeclinedTrips=(req, res)=>{
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 15,
+        sort:{'_id':-1},
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
+        populate:{
+            path:'airline'
+        } }]
+}
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            BookingModel.paginate({$and:[{user:user.id}, {declined:true}]}, options, (err, trips)=>{
+                if(err)res.status(501).json({code:"01", message:"error retriving declined trips"})
+                res.status(200).json({code:"00", message:trips})
+            })
+        })
+    }catch(e){
+        res.status(500)
+    }
+}
+
+exports.getAllAprovedTrips=(req, res)=>{
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 15,
+        sort:{'_id':-1},
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
+        populate:{
+            path:'airline'
+        } }]
+}
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            BookingModel.paginate({$and:[{user:user.id}, {declined:false}, {pending:false}]}, options, (err, trips)=>{
+                if(err)res.status(501).json({code:"01", message:"error retriving approved trips"})
+                res.status(200).json({code:"00", message:trips})
+            })
+        })
+    }catch(e){
+        res.status(500)
+    }
+}
+
+exports.getBookingType=(req, res)=>{
+    var value=req.params.value
+    var {page, limit,}= req.query;
+    var options={
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 15,
+        sort:{'_id':-1},
+        populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
+        populate:{
+            path:'airline'
+        } }]
+}
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            BookingModel.paginate({$and:[{user:user.id}, {type:value}]}, options, (err, trips)=>{
+                if(err)res.status(501).json({code:"01", message:"error retriving trips"})
+                res.status(200).json({code:"00", message:trips})
+            })
+        })
+    }catch(e){
+        res.status(500)
+    }
+}
