@@ -1,127 +1,70 @@
-const flightBookingModel=require('../models/business-booking-flight')
-const HotelBookingModel=require('../models/business-booking-hotel')
-const carBookingModel=require('../models/business-booking-car')
-const venueBookingModel=require('../models/business-booking-venue')
+const auth_user=require('../helpers/auth')
+const BookingModel=require('../models/user-booking')
 
 class Approve{
-    approveHotel(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:1
-        }
+    approveBooooking(req, res){
+            var data={
+            pending:false,
+            declined:false
+            }
+            var id={_id:req.params.id}
         try{
-            HotelBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving hotel"})
-                res.status(200).json({code:"00", message:"hotel approved successfully"})
+            auth_user.verifyInviteToken(req.token).then(user=>{
+                BookingModel.findById(id, (err, booking)=>{
+                    if(user.limit=='No'){    
+                        BookingModel.findByIdAndUpdate(id, data, (err)=>{
+                            if(err) res.status(501).json({code:"01", message:"error approving booking"})
+                        })
+                    }else if(user.limit=='Yes'){
+                        res.status(200).json({code:"01", message:"You don't have access to approve booking"})
+                    }else{
+                        if( user.limit_amount<=booking.price){
+                            res.status(200).json({code:"01", message:"unauthorized to approve booking of this magnitude"})
+                        }else{
+                            BookingModel.findByIdAndUpdate(id, data, (err)=>{
+                                if(err) res.status(501).json({code:"01", message:"error approving booking"})
+                            })
+                        }
+                       
+                    }
+                })
+                
             })
         }catch(e){
-            console.log(e)
             res.status(500)
         }
     }
 
-    disApproveHotel(req, res){
-        var id={_id:req.params.id}
+    declinedBooing(req, res){
         var data={
-            approved:2
-        }
+            pending:false,
+            declined:true
+            }
+            var id={_id:req.params.id}
         try{
-            HotelBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving hotel"})
-                res.status(200).json({code:"00", message:"hotel disapproved successfully"})
+            auth_user.verifyInviteToken(req.token).then(user=>{
+                BookingModel.findById(id, (err, booking)=>{
+                    if(user.limit=='No'){    
+                        BookingModel.findByIdAndUpdate(id, data, (err)=>{
+                            if(err) res.status(501).json({code:"01", message:"error declining booking"})
+                        })
+                    }else if(user.limit=='Yes'){
+                        res.status(200).json({code:"01", message:"You don't have access to decline booking"})
+                    }else{
+                        if( user.limit_amount<=booking.price){
+                            res.status(200).json({code:"01", message:"unauthorized to decline booking of this magnitude"})
+                        }else{
+                            BookingModel.findByIdAndUpdate(id, data, (err)=>{
+                                if(err) res.status(501).json({code:"01", message:"error declining booking"})
+                            })
+                        }
+                       
+                    }
+                })
+                
             })
         }catch(e){
-            console.log(e)
             res.status(500)
-        }
-    }
-
-    approveFlight(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:1
-        }
-        try{
-            flightBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving flight"})
-                res.status(200).json({code:"00", message:"flight approved successfully"})
-            })
-        }catch(e){
-            console.log(e)
-            res.status(500)
-        }
-    }
-
-    disApproveFlight(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:2
-        }
-        try{
-            flightBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving flight"})
-                res.status(200).json({code:"00", message:"flight disapproved successfully"})
-            })
-        }catch(e){
-            console.log(e)
-            res.status(500)
-        }
-    }
-    approveVenue(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:1
-        }
-        try{
-            venueBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving venue"})
-                return res.status(200).json({code:"00", message:"venue approved successfully"})
-            })
-        }catch(e){
-            console.log(e)
-        }
-    }
-    disApproveVenue(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:2
-        }
-        try{
-            venueBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error disapproving venue"})
-                return res.status(200).json({code:"00", message:"venue disapproved successfully"})
-            })
-        }catch(e){
-            console.log(e)
-        }
-    }
-
-    approveCar(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:1
-        }
-        try{
-            carBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error approving car rental"})
-                return res.status(200).json({code:"00", message:"car rental approved successfully"})
-            })
-        }catch(e){
-            console.log(e)
-        }
-    }
-    disApproveCar(req, res){
-        var id={_id:req.params.id}
-        var data={
-            approved:2
-        }
-        try{
-            carBookingModel.findByIdAndUpdate(id, data, (err)=>{
-                if(err)res.status(501).json({code:"01", message:"error disapproving car rental"})
-                return res.status(200).json({code:"00", message:"car rental disapproved successfully"})
-            })
-        }catch(e){
-            console.log(e)
         }
     }
 }
