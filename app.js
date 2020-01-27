@@ -78,7 +78,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '.hbs');
 
 //routing
-app.use('/bizbookin', approvalRouter)
+app.use('/approval', approvalRouter)
 app.use('/businessbooking', businessbookingRouter)
 app.use('/businessreceipt', businessreceiptRouter)
 app.use('/employee', employeeRouter)

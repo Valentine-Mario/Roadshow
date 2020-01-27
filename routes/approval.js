@@ -4,6 +4,5 @@ const approvalController=require('../controller/approve-disapprove')
 const verification= require('../verification/verification')
 
 
-router.get('/approve', verification.verifyToken, approvalController.approveBooooking)
-router.get('/decline', verification.verifyToken, approvalController.declinedBooing)
+router.post('/approvedisapprove/:id', verification.verifyToken, approvalController.approveOrDisapproveBooooking)
 module.exports = router;
