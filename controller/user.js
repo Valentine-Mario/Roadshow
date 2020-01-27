@@ -127,22 +127,22 @@ exports.login=(req, res)=>{
             inviteModel.findOne({email:data.email}, (err, invited_user)=>{
                 if(user){
                     if(user.password==null){
-                         res.json({code:"01", message:"please login with google"})
+                         res.status(201).json({code:"01", message:"please login with google"})
                     }else{
                      hasher.compare_password(data.password, user.password).then(value=>{
                           
                          if(value){
                              if(user.verified==false){
-                                 res.json({code:"01", message:"please verify email before you log in"})
+                                 res.status(201).json({code:"01", message:"please verify email before you log in"})
                              }else{
                                  user=user._id
                                  auth_user.createToken({user}).then(token=>{
-                                     res.status(200).json({code:"00", message:token})
+                                     res.status(200).json({code:"00", token:token, message:"login successful"})
                                  })
                              }      
                  }
                  else{
-                     res.json({code:"01", message:"invalid password"})
+                     res.status(201).json({code:"01", message:"invalid password"})
                  }
                      })  
                     } 

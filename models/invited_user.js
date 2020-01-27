@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
 var schema= new mongoose.Schema({
-    name:String,
+    name:{type: String, required: true},
     email:{type: String, unique:true},
-    password:String,
+    password:{type: String, required: true},
     date_created:Date,
     limit:String,
     limit_amount:Number,

@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
 var schema= new mongoose.Schema({
-   comment:String,
-   hotel:String,
-   rating:Number,
+   comment:{type: String, required: true},
+   hotel:{type: String, required: true},
+   rating:{type: Number, required: true},
    user:{type:mongoose.Schema.Types.ObjectId, ref:'user'},
    date:Date
 })

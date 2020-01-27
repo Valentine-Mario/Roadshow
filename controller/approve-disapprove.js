@@ -14,7 +14,7 @@ class Approve{
                     res.status(201).json({code:"01", message:"unauthorized to perform action"})
                 }else{
                     BookingModel.findById(id, (err, booking)=>{
-                    if(user.limit=='No'){    
+                    if(user.limit=='No'|| user.limit==undefined){    
                         BookingModel.findByIdAndUpdate(id, data, (err)=>{
                             if(err) res.status(501).json({code:"01", message:"error approving booking"})
                             res.status(200).json({code:"00", message:"updates made successfully"})
