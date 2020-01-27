@@ -60,41 +60,32 @@ class mailer{
           });
     }
 
-    pdf_email(user){
-
-        if(user.activity.length<1){
-            res.json({code:"01", message:"you have no booking records"})
-        }else{
+    pdf_email(list, user){
             fs.appendFile(`./files/${user._id}.pdf`, '', (err)=>{
                 if(err){
-                    res.json({code:"01", message:"error creating pdf. Try again"})
+                    res.status(501)
                 }else{
                     var options = { format: 'Letter' };
-            var str=`<div style="width:100%;">
-            <div style="width:30%; float:left;">
-                <img width='200' height='200' src="https://res.cloudinary.com/rchain/image/upload/v1556621544/roadshow.png">
-            </div>
-            <div style="width:70%; font-family:Comic Sans MS, cursive, sans-serif; float:left;">
-                <h2 style="padding-top: 50px;">Your Roadshow Booking Details</h2>
-                <br/>
-                <p style="padding-top: 10px; font-size: 18px;">Dear ${user.name}, below is the details of your bookings on Roadshow</p>
-            </div>
-            <hr/>
-        </div>
-              <ol style="padding-top:30px;">`
-            for(var a of user.activity){
-                str += '<li> <b>Type</b>:'+ a.type + '<br/><br/> <b>Details</b>:'+ a.details + '<br/><br/> <b>Start date</b>:'+ a.start_date+ '<br/><br/> <b>End date</b>:'+ a.end_date+ '</li> <hr/>';
-    
-            }
-            str += '</ol">';
-            str+='<small><i>Thank you for using Roadshow </i></small>'
-            pdf.create(str, options).toFile(`./files/${user._id}.pdf`, function(err, response) {
+
+                    var pdf_table=`<table style="width:70%; border:1px;">`
+                        for(var a of list){
+                            pdf_table+= `<tr style="width:100%">`
+                            pdf_table+=`<td>Type: ${a.type}</td> <td>Start date: ${a.start_date}</td> <td>End Date: ${a.end_date}</td> <td>Duration: ${a.duration} days</td> <td>Price($): ${a.price}</td>`
+                            pdf_table+=`</tr>`
+                            pdf_table+= `<tr style="width:100%">`
+                            pdf_table+=`<td>Room Type: ${a.roomType}</td> <td>No of rooms: ${a.no_of_rooms}</td> <td>Quantity: ${a.quantity}</td> <td>No of people: ${a.no_of_people}</td> <td>Declined: ${a.declined}</td> <td>Pending: ${a.pending}</td>`
+                            pdf_table+=`</tr>`
+                        }
+                   pdf_table+=`</table>`
+                    pdf_table+=`<p>Thank you for using sprintrip`
+            
+            pdf.create(pdf_table, options).toFile(`./files/${user._id}.pdf`, function(err, response) {
                 if(err){
-                    res.json({code:"01", err:err, message:"error writing to pdf"})
+                    res.status(501)
                 }else{
                     
                         var mailOption={
-                            from:`Road Show`,
+                            from:`Sprintrip`,
                             to:user.email,
                             subject:`Booking details in PDF`,
                             attachments:[
@@ -105,7 +96,7 @@ class mailer{
                             ],
                             html:`
                            <div>
-                           Attached to this mail is a copy of your bookings on roadshow
+                           Attached to this mail is a copy of your bookings on sprintrip
                            </div>
                            <br/>
                             `
@@ -117,6 +108,8 @@ class mailer{
                             }else{
                                 
                                console.log(true)
+                               fs.unlink(`./files/${user._id}.pdf`, (err)=>{
+                               })
                                 
                             }
                         })
@@ -125,7 +118,7 @@ class mailer{
               })
                 }
             })
-        }
+        
     
 }
     notify_email(header, content, email, name){

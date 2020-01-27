@@ -3,6 +3,7 @@ const auth_user=require('../helpers/auth')
 const mail=require('../helpers/mail')
 const hasher=require('../helpers/password-bcrypt')
 const inviteModel=require('../models/invited_user')
+const BookingModel=require('../models/user-booking')
 
 exports.addGoogleUser=(req, res)=>{
     try{
@@ -294,8 +295,14 @@ exports.login=(req, res)=>{
 exports.requestPdf=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
-            mail.pdf_email(user)
-                res.json({code:"00", message:"booking sent to mail"})
+            BookingModel.find({user:user.id}, (err, booking)=>{
+               if(booking.length < 1){
+                res.status(200).json({code:"01", message:"you have no booking"})
+               }else{
+                mail.pdf_email(booking, user)
+                res.status(200).json({code:"00", message:"booking sent to mail"})
+               }
+            })
         })
                 
     }catch(e){
