@@ -1,7 +1,6 @@
 require('dotenv').config()
 const jwt=require('jsonwebtoken')
 const usrModel=require('../models/user')
-const busModel=require('../models/business')
 const inviteModel=require('../models/invited_user')
 
 class auth{
@@ -68,20 +67,7 @@ class auth{
         });
     }
 
-    verifyTokenMailBiz(token){
-        return new Promise((resolve, reject) => {
-            jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET, function(err, decodedToken) {
-                if (err) {
-                    reject(err);
-                } else {
-                    busModel.findById(decodedToken.biz, (err, business)=>{
-                        if(err)reject(err)
-                        resolve(business)
-                    })
-                }
-            });
-        });
-    }
+   
 }
 
 module.exports=new auth()

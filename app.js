@@ -17,10 +17,7 @@ var carreviewRouter=require('./routes/car-review')
 var airlineRouter=require('./routes/airline')
 var flightRouter=require('./routes/flight')
 var receiptRouter=require('./routes/receipts')
-var businessRouter=require('./routes/business')
 var employeeRouter=require('./routes/employee')
-var businessreceiptRouter=require('./routes/business-receipt')
-var businessbookingRouter=require('./routes/business-bookings')
 var approvalRouter=require('./routes/approval')
 var inviteRouter=require('./routes/invite')
 
@@ -79,8 +76,6 @@ app.set('view engine', '.hbs');
 
 //routing
 app.use('/approval', approvalRouter)
-app.use('/businessbooking', businessbookingRouter)
-app.use('/businessreceipt', businessreceiptRouter)
 app.use('/employee', employeeRouter)
 app.use('/receipt', receiptRouter)
 app.use('/flight', flightRouter)
@@ -95,7 +90,6 @@ app.use('/hotel', hotelRouter)
 app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
-app.use('/business', businessRouter)
 app.use('/invite', inviteRouter)
 
 module.exports = app;

@@ -31,7 +31,7 @@ exports.addHotelBooking=(req, res)=>{
         auth_user.verifyToken(req.token).then(decoded_user=>{
             userModel.findById(decoded_user._id, (err, user)=>{
                 if(err){
-                    res.json({code:"01", message:"error getting user information"})
+                    res.json({code:"01", message:"error getting user information"});
                 }else{
                     hotelModel.find({rooms:id._id}, (err, hotel)=>{
                         
@@ -750,8 +750,15 @@ exports.getBookingType=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             BookingModel.paginate({$and:[{user:user.id}, {type:value}]}, options, (err, trips)=>{
-                if(err)res.status(501).json({code:"01", message:"error retriving trips"})
-                res.status(200).json({code:"00", message:trips})
+                if(err){
+                    res.status(501).json({code:"01", message:"error retriving trips"})
+                }else{
+                    let booking_result = trips.map(a => a.price);
+                    var sum=booking_result.reduce(function(a,b){
+                            return a+b
+                })
+              res.status(200).json({code:"00", message:trips, total_price:sum})
+        }
             })
         })
     }catch(e){
