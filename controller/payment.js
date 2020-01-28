@@ -42,5 +42,25 @@ class Payment{
             res.status(500)
         }
     }
+
+    deleteCard(req, res){
+        var id={_id:req.params.id}
+        try{
+            auth.verifyToken(req.token).then(user=>{
+                payment.findById(id, (err, card)=>{
+                    if(JSON.stringify(user.id)!== JSON.stringify(card.user)){
+                        res.status(201).json({code:"01", message:"unauthorized to delete card details"})
+                    }else{
+                        payment.findByIdAndDelete(id, (err)=>{
+                            if(err)res.status(501).json({code:"01", message:"error deleting card"})
+                            res.status(200).json({code:"00", message:"card deleted successfully"})
+                        })
+                    }
+                })
+            })
+        }catch(e){
+            res.status(500)
+        }
+    }
 }
 module.exports=new Payment()
