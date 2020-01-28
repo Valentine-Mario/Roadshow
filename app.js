@@ -20,6 +20,7 @@ var receiptRouter=require('./routes/receipts')
 var employeeRouter=require('./routes/employee')
 var approvalRouter=require('./routes/approval')
 var inviteRouter=require('./routes/invite')
+var paymentRoute=require('./routes/payment')
 
 var bodyParser = require('body-parser')
 var googleSetUp= require('./setup')
@@ -91,6 +92,7 @@ app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/admin', adminRouter)
 app.use('/invite', inviteRouter)
+app.use('/card', paymentRoute)
 
 module.exports = app;
 

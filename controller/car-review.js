@@ -44,7 +44,7 @@ exports.getReviews=(req, res)=>{
                 let ratings_result = allRatins.map(a => a.rating);
                 var sum=ratings_result.reduce(function(a,b){
                          return a+b
-              })
+              }, 0)
                 mean=parseInt(sum)/parseInt( ratings_result.length)
                 meanVal=mean.toFixed(2)
                 if(err)res.status(501).json({code:"01", message:"error getting review"})
