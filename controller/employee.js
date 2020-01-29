@@ -21,7 +21,7 @@ class Employee{
                         })
                 }
             })
-        }catch(e){
+        }catch(e){;
             res.status(501)
         }
     }

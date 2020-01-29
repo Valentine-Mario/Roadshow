@@ -24,7 +24,8 @@ exports.addHotelBooking=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -127,7 +128,8 @@ exports.addHotelBookingInvitedUser=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -190,7 +192,8 @@ exports.addCarBooking=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -275,7 +278,8 @@ exports.addCarBookingInvitedUser=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -327,7 +331,8 @@ exports.addVenueBooking=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -415,7 +420,8 @@ exports.addVenueBookingInvitedUser=(req, res)=>{
         flight_id:null, 
         no_of_people:'-',
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -468,7 +474,8 @@ exports.addFlight=(req, res)=>{
         flight_id:'', 
         no_of_people:req.body.no_of_people,
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -557,7 +564,8 @@ exports.addFlightBookingInvitedUser=(req, res)=>{
         flight_id:'', 
         no_of_people:req.body.no_of_people,
         pending:'',
-        declined:false
+        declined:false,
+        group:req.body.group
     }
     var id={_id:req.params.id}
     try{
@@ -605,7 +613,7 @@ exports.getAllUpcomingBookings=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 
 }
     try{
@@ -629,7 +637,7 @@ exports.getAllPastTrips=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
@@ -652,7 +660,7 @@ exports.getAllCurrentTrips=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
         try{
             auth_user.verifyToken(req.token).then(user=>{
@@ -675,7 +683,7 @@ exports.getAllPendingTrips=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
     try{
         auth_user.verifyToken(req.token).then(user=>{
@@ -698,7 +706,7 @@ exports.getAllDeclinedTrips=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
     try{
         auth_user.verifyToken(req.token).then(user=>{
@@ -721,7 +729,7 @@ exports.getAllAprovedTrips=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
     try{
         auth_user.verifyToken(req.token).then(user=>{
@@ -745,21 +753,26 @@ exports.getBookingType=(req, res)=>{
         populate:['venue_id', 'hotel_id', 'car_id', {path:'flight_id',
         populate:{
             path:'airline'
-        } }]
+        } }, 'group']
 }
     try{
         auth_user.verifyToken(req.token).then(user=>{
-            BookingModel.paginate({$and:[{user:user.id}, {type:value}]}, options, (err, trips)=>{
+            BookingModel.find({$and:[{user:user.id}, {type:value}]}, (err, allTrips)=>{
+                let bookings_result = allTrips.map(a => a.price);
+                var sum=bookings_result.reduce(function(a,b){
+                         return a+b
+              }, 0)
+
+              BookingModel.paginate({$and:[{user:user.id}, {type:value}]}, options, (err, trips)=>{
                 if(err){
                     res.status(501).json({code:"01", message:"error retriving trips"})
                 }else{
-                    let booking_result = trips.map(a => a.price);
-                    var sum=booking_result.reduce(function(a,b){
-                            return a+b
-                })
-              res.status(200).json({code:"00", message:trips, total_price:sum})
+                   
+              res.status(200).json({code:"00", message:trips, sum_price:sum})
         }
             })
+            })
+           
         })
     }catch(e){
         res.status(500)

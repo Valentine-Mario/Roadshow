@@ -6,7 +6,6 @@ var mongoose=require('mongoose')
 const passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var adminRouter= require('./routes/admin');
 var hotelRouter= require('./routes/hotels');
 var roomRouter=require('./routes/room');
 var hotelreviewRouter=require('./routes/hotel-review')
@@ -90,7 +89,6 @@ app.use('/room', roomRouter)
 app.use('/hotel', hotelRouter)
 app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
-app.use('/admin', adminRouter)
 app.use('/invite', inviteRouter)
 app.use('/card', paymentRoute)
 

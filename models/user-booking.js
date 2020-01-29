@@ -16,7 +16,8 @@ var schema= new mongoose.Schema({
    flight_id:{type:mongoose.Schema.Types.ObjectId, ref:'flight'}, 
    no_of_people:{type: String, required: true},
    pending:Boolean,
-   declined:Boolean
+   declined:Boolean,
+   group:{type:mongoose.Schema.Types.ObjectId, ref:'employees'}
 })
 schema.plugin(mongoosePaginate);
 module.exports= mongoose.model('user-bookings', schema);
