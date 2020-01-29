@@ -310,3 +310,19 @@ exports.requestPdf=(req, res)=>{
     }
 }
 
+exports.changeAccountType=(req, res)=>{
+    var data={
+        account_type:req.body.account_type
+    }
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            userModel.findByIdAndUpdate(user.id, data, (err)=>{
+                if(err)res.status(501).json({code:"01", message:"error updating account type. Please try again later"})
+                res.status(200).json({code:"00", message:"account type updated successfully"})
+            })
+        })
+    }catch(e){
+        res.status(500)
+    }
+}
+

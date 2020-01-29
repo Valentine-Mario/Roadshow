@@ -20,5 +20,6 @@ router.get('/delete', verification.verifyToken, userController.deleteAccount)
 router.post('/notify', userController.notifyUsers)
 router.get('/request', verification.verifyToken, userController.requestPdf)
 router.post('/sendinvite', verification.verifyToken, userController.sendInvite)
+router.post('/changeacctype', verification.verifyToken, userController.changeAccountType)
 
 module.exports = router;
