@@ -11,5 +11,6 @@ router.get('/get', verification.verifyToken, invite.getInvitedUser)
 router.post('/edit', verification.verifyToken, invite.modifyInvitedUser)
 router.post('/editsetting/:id', verification.verifyToken, invite.modifyInvitedUserAccess)
 router.get('/getone/:id', invite.getInvitedUserById)
+router.post('/changepassword', verification.verifyToken, invite.modifyInvitedUserPassword)
 
 module.exports = router;

@@ -2,6 +2,7 @@ const hasher=require('../helpers/password-bcrypt')
 const inviteModel=require('../models/invited_user')
 const userModel= require('../models/user');
 const auth= require('../helpers/auth')
+const hasher=require('../helpers/password-bcrypt')
 
 class Invite{
    
@@ -96,6 +97,38 @@ class Invite{
         }catch(e){
             res.status(500)
         }
+    }
+
+    modifyInvitedUserPassword(req, res){
+        var old_password= req.body.old_password
+    var data={
+        password:req.body.password
+    }
+    try{
+        auth_user.verifyInviteToken(req.token).then(decoded_user=>{
+        hasher.compare_password(old_password, decoded_user.password).then(value=>{
+            if(!value){
+                res.json({message:"wrong old password"})
+            }else{
+                if(data.password.length<6){
+                    res.json({code:"01", message:"password should be 6 or more characters"})
+                }else{
+                    hasher.hash_password(data.password).then(hashed=>{
+                        data.password = hashed;
+                        inviteModel.findByIdAndUpdate(decoded_user._id, data, function(err){
+                            if(err) res.json({err:err, message:"error, could not update password"})
+                            res.json({code:"00", message:"password changed successfully."})
+                        })
+                    })
+                }
+                
+            }
+        })
+        })
+    
+    }catch(e){
+        res.status(500)
+    }
     }
 
     modifyInvitedUserAccess(req, res){
