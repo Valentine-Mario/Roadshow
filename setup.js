@@ -17,33 +17,32 @@ passport.use(new GoogleStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
         User.find({auth_id: '116059461905405053659'}, (err, user_value)=>{
-            console.log(user_value)
-            // if(user_value.length>0){
+            if(user_value.length>0){
                 
-            //     done(null, user_value[0]._id)
-            // }else{
-            //     data={
-            //         name:profile.displayName,
-            //         email:profile.emails[0].value,
-            //         password:null,
-            //         auth_id:profile.id,
-            //         verified:true,
-            //         access:0,
-            //         date_created:Date.now(),
-            //         pics:profile.photos[0].value,
-            //         account_type:'Personal',               
-            //     }
-            //     User.create(data, (err, user_details)=>{
-            //         if(err){
-            //             if (err.name === 'MongoError' && err.code === 11000) {
-            //                 done(null)
+                done(null, user_value[0]._id)
+            }else{
+                data={
+                    name:profile.displayName,
+                    email:profile.emails[0].value,
+                    password:null,
+                    auth_id:profile.id,
+                    verified:true,
+                    access:0,
+                    date_created:Date.now(),
+                    pics:profile.photos[0].value,
+                    account_type:'Personal',               
+                }
+                User.create(data, (err, user_details)=>{
+                    if(err){
+                        if (err.name === 'MongoError' && err.code === 11000) {
+                            done(null)
                             
-            //               }
-            //         }else{
-            //             done(null, user_details._id)
-            //         }
-            //     })
-            // }
+                          }
+                    }else{
+                        done(null, user_details._id)
+                    }
+                })
+            }
            })
 
     
