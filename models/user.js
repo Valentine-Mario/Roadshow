@@ -3,7 +3,7 @@ var mongoosePaginate = require('mongoose-paginate');
 var schema= new mongoose.Schema({
     name:{type: String, required: true},
     email:{type: String, unique:true, required: true},
-    password:{type:String, required: true},
+    password:{type:String},
     auth_id:String,
     verified:{type:Boolean, default:false},
     date_created:Date,
