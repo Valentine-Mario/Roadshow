@@ -4,6 +4,7 @@ const mail=require('../helpers/mail')
 const hasher=require('../helpers/password-bcrypt')
 const inviteModel=require('../models/invited_user')
 const BookingModel=require('../models/user-booking')
+const cloud=require('../helpers/cloud')
 
 exports.addGoogleUser=(req, res)=>{
     try{
@@ -203,7 +204,26 @@ exports.login=(req, res)=>{
             }) 
         
     }catch(e){
-        console.log(e)
+        res.status(500)
+    }
+  }
+
+  exports.updateProfilePics=(req, res)=>{
+    var data={
+        pics:req.files[0].path
+    }
+    try{
+        auth_user.verifyToken(req.token).then(user=>{
+            cloud.pics_upload(data.pics).then(pics_url=>{
+                data.pics=pics_url
+                userModel.findByIdAndUpdate(user.id, data, (err)=>{
+                    if(err) res.status(201).json({code:"01", message:"error updating profile pics"})
+                    res.status(200).json({code:"00", message:"pics updated successfully"})
+                })
+            })
+        })
+    }catch(e){
+        res.status(500)
     }
   }
 
