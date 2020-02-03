@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy({
         User.find({auth_id: profile.id}, (err, user_value)=>{
             if(user_value){
                 
-                done(null, user_value[0]._id)
+                done(null, user_value[0].id)
             }else{
                 data={
                     name:profile.displayName,
