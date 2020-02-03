@@ -16,34 +16,33 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://rocky-mesa-69765.herokuapp.com"+"/user/google"
   },
   function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate({auth_id: profile.id}, (err, user_value)=>{
-            done(null, user_value[0]._id)
-             if(err){
+        User.find({auth_id: profile.id}, (err, user_value)=>{
+            // if(user_value.length>0){
+                
+            //     done(null, user_value[0]._id)
+            // }else{
+                data={
+                    name:profile.displayName,
+                    email:profile.emails[0].value,
+                    password:null,
+                    auth_id:profile.id,
+                    verified:true,
+                    access:0,
+                    date_created:Date.now(),
+                    pics:profile.photos[0].value,
+                    account_type:'Personal',               
+                }
+                User.create(data, (err, user_details)=>{
+                    if(err){
                         if (err.name === 'MongoError' && err.code === 11000) {
                             done(null)
                             
                           }
+                    }else{
+                        done(null, user_details._id)
                     }
-            // if(user_value.length>0){
-                
-            // }else{
-            //     data={
-            //         name:profile.displayName,
-            //         email:profile.emails[0].value,
-            //         password:null,
-            //         auth_id:profile.id,
-            //         verified:true,
-            //         access:0,
-            //         date_created:Date.now(),
-            //         pics:profile.photos[0].value,
-            //         account_type:'Personal',               
-            //     }
-            //     User.create(data, (err, user_details)=>{
-            //        else{
-            //             done(null, user_details._id)
-            //         }
-            //     })
-            // }
+                })
+          //  }
            })
 
     
