@@ -16,10 +16,10 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://rocky-mesa-69765.herokuapp.com"+"/user/google"
   },
   function(accessToken, refreshToken, profile, done) {
-        User.findOne({auth_id: profile.id}, (err, user_value)=>{
-            if(user_value!==null){
+        User.find({auth_id: profile.id}, (err, user_value)=>{
+            if(user_value){
                 
-                done(null, user_value._id)
+                done(null, user_value[0]._id)
             }else{
                 data={
                     name:profile.displayName,
@@ -44,7 +44,7 @@ passport.use(new GoogleStrategy({
                 })
             }
            })
-       
+
     
    }
   
