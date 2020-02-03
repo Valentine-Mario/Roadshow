@@ -2,7 +2,6 @@ const hasher=require('../helpers/password-bcrypt')
 const inviteModel=require('../models/invited_user')
 const userModel= require('../models/user');
 const auth= require('../helpers/auth')
-const hasher=require('../helpers/password-bcrypt')
 
 class Invite{
    
