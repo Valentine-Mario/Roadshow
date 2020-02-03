@@ -3,7 +3,7 @@ var router = express.Router();
 var userController=require('../controller/user')
 var passport=require('passport')
 const verification= require('../verification/verification')
-ar multer = require('multer')
+var multer = require('multer')
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
       cb(null, './files')
