@@ -16,11 +16,11 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://rocky-mesa-69765.herokuapp.com"+"/user/google"
   },
   function(accessToken, refreshToken, profile, done) {
-        User.find({auth_id: profile.id}, (err, user_value)=>{
-            if(user_value.length>0){
+      //  User.find({auth_id: profile.id}, (err, user_value)=>{
+            // if(user_value.length>0){
                 
-                done(null, user_value[0]._id)
-            }else{
+            //     done(null, user_value[0]._id)
+            // }else{
                 data={
                     name:profile.displayName,
                     email:profile.emails[0].value,
@@ -42,8 +42,8 @@ passport.use(new GoogleStrategy({
                         done(null, user_details._id)
                     }
                 })
-            }
-           })
+          //  }
+        //   })
 
     
    }
