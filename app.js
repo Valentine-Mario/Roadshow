@@ -58,7 +58,7 @@ var options = {
   timeout: 120000,
  
   onTimeout: function(req, res) {
-    res.status(503).json({code:"01", message:"service timed out"});
+    res.status(206).json({code:"01", message:"service timed out"});
   },
  
 };
