@@ -297,7 +297,7 @@ exports.login=(req, res)=>{
        userModel.find({verified:true}, (err, user)=>{
             for(item of user){
                 
-                mail.notify_email(data.header, data.content, item.email, item.name).then(response=>{
+                mail.notify_email(data.header, data.content, item.email).then(response=>{
                     
                         if(response==true){
                             console.log("mail sent successfully")

@@ -166,6 +166,19 @@ class Invite{
             res.status(500)
         }
     }
+
+    getAllYourInvitedUser(req, res){
+        try{
+            auth.verifyToken(req.token).then(user=>{
+                inviteModel.find({user:user.id}, (err, invited_user)=>{
+                    if(err)res.status(501).json({code:"01", message:"error retriving data"})
+                    res.status(200).json({code:"00", message:invited_user})
+                })
+            })
+        }catch(e){
+            res.status(500)
+        }
+    }
 }
 
 module.exports=new Invite();
