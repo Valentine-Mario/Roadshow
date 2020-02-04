@@ -7,4 +7,4 @@ var schema= new mongoose.Schema({
    date:Date
 })
 schema.plugin(mongoosePaginate);
-module.exports= mongoose.model('email_notification', schema);
+module.exports= mongoose.model('questions', schema);

@@ -121,19 +121,18 @@ class mailer{
         
     
 }
-    notify_email(header, content, email, name){
+    notify_email(header, content, email){
             var mailOption={
                 from:`Sprintrip`,
                 to:email,
                 subject:header,
                 html:`
-                hello ${name} <br/>
                 ${content}
                 `
             };
             transporter.sendMail(mailOption, function(err, info){
                 if(err){
-                    console.log(fasle, err)
+                    console.log(false, err)
                 }else{
                     console.log(true)  
                 }

@@ -215,7 +215,8 @@ exports.login=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             cloud.pics_upload(data.pics).then(pics_url=>{
-                data.pics=pics_url
+                data.pics=pics_url.secure_url
+               
                 userModel.findByIdAndUpdate(user.id, data, (err)=>{
                     if(err) res.status(201).json({code:"01", message:"error updating profile pics"})
                     res.status(200).json({code:"00", message:"pics updated successfully"})
