@@ -18,7 +18,6 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, done) {
 
         User.find({auth_id: profile.id}, (err, user_value)=>{
-            console.log(err)
             if(user_value.length>0){
                 
                 done(null, user_value[0]._id)
@@ -35,7 +34,6 @@ passport.use(new GoogleStrategy({
                     account_type:'Personal',               
                 }
                 User.create(data, (err, user_details)=>{
-                    console.log(err)
                     if(err){
                         if (err.name === 'MongoError' && err.code === 11000) {
                             done(null)

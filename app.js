@@ -20,7 +20,8 @@ var employeeRouter=require('./routes/employee')
 var approvalRouter=require('./routes/approval')
 var inviteRouter=require('./routes/invite')
 var paymentRoute=require('./routes/payment')
-
+var email_notification=require('./routes/email-notification');
+var questions=require('./routes/questions')
 var bodyParser = require('body-parser')
 var googleSetUp= require('./setup')
 require('dotenv').config()
@@ -91,6 +92,8 @@ app.use('/booking', indexRouter);
 app.use('/user', usersRouter);
 app.use('/invite', inviteRouter)
 app.use('/card', paymentRoute)
+app.use('/email', email_notification)
+app.use('/question', questions)
 
 module.exports = app;
 
