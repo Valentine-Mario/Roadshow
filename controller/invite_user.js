@@ -104,7 +104,7 @@ class Invite{
         password:req.body.password
     }
     try{
-        auth_user.verifyInviteToken(req.token).then(decoded_user=>{
+        auth.verifyInviteToken(req.token).then(decoded_user=>{
         hasher.compare_password(old_password, decoded_user.password).then(value=>{
             if(!value){
                 res.status(201).json({message:"wrong old password"})
@@ -123,7 +123,7 @@ class Invite{
                 
             }
         })
-        })
+        }).catch(err=>{console.log(err)})
     
     }catch(e){
         res.status(500)
