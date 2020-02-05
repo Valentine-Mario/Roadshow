@@ -29,6 +29,7 @@ router.post('/changepassword', verification.verifyToken, userController.changePa
 router.get('/delete', verification.verifyToken, userController.deleteAccount)
 router.post('/notify', userController.notifyUsers)
 router.get('/request', verification.verifyToken, userController.requestPdf)
+router.get('/requestinviteduser', verification.verifyToken, userController.requestPdfInvitedUser)
 router.post('/sendinvite', verification.verifyToken, userController.sendInvite)
 router.post('/changeacctype', verification.verifyToken, userController.changeAccountType)
 router.post('/updatepics', upload.any(), verification.verifyToken, userController.updateProfilePics)

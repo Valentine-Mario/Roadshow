@@ -331,6 +331,24 @@ exports.requestPdf=(req, res)=>{
     }
 }
 
+exports.requestPdfInvitedUser=(req, res)=>{
+    try{
+        auth_user.verifyInviteToken(req.token).then(user=>{
+            BookingModel.find({user:user}, (err, booking)=>{
+               if(booking.length < 1){
+                res.status(200).json({code:"01", message:"you have no booking"})
+               }else{
+                mail.pdf_email(booking, user)
+                res.status(200).json({code:"00", message:"booking sent to mail"})
+               }
+            })
+        })
+                
+    }catch(e){
+        res.status(500)
+    }
+}
+
 exports.changeAccountType=(req, res)=>{
     var data={
         account_type:req.body.account_type
