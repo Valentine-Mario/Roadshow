@@ -160,7 +160,7 @@ exports.login=(req, res)=>{
                                 })               
                 }
                 else{
-                    res.json({code:"01", message:"invalid password"})
+                    res.status(201).json({code:"01", message:"invalid password"})
                 }
                     })  
                  }else{
