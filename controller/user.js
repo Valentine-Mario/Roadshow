@@ -334,7 +334,7 @@ exports.requestPdf=(req, res)=>{
 exports.requestPdfInvitedUser=(req, res)=>{
     try{
         auth_user.verifyInviteToken(req.token).then(user=>{
-            BookingModel.find({user:user}, (err, booking)=>{
+            BookingModel.find({user:user.user}, (err, booking)=>{
                if(booking.length < 1){
                 res.status(200).json({code:"01", message:"you have no booking"})
                }else{
