@@ -195,10 +195,10 @@ exports.login=(req, res)=>{
                 userModel.findByIdAndUpdate(decoded_user._id, data, (err)=>{
                     if(err){
                      if (err.name === 'MongoError' && err.code === 11000) {
-                         res.json({code:"01", message:"email already exist"})
+                         res.status(201).json({code:"01", message:"email already exist"})
                        }
                     } else{
-                     res.json({code:"00", message:"update successful"});
+                     res.status(200).json({code:"00", message:"update successful"});
                     }                      
                  })  
             }) 
@@ -219,7 +219,7 @@ exports.login=(req, res)=>{
                
                 userModel.findByIdAndUpdate(user.id, data, (err)=>{
                     if(err) res.status(201).json({code:"01", message:"error updating profile pics"})
-                    res.status(200).json({code:"00", message:"pics updated successfully"})
+                    res.status(200).json({code:"00", message:"pics updated successfully", pics:pics_url.secure_url})
                 })
             })
         })
@@ -237,16 +237,16 @@ exports.login=(req, res)=>{
         auth_user.verifyToken(req.token).then(decoded_user=>{
         hasher.compare_password(old_password, decoded_user.password).then(value=>{
             if(!value){
-                res.json({message:"wrong old password"})
+                res.status(201).json({message:"wrong old password"})
             }else{
                 if(data.password.length<6){
-                    res.json({code:"01", message:"password should be 6 or more characters"})
+                    res.status(201).json({code:"01", message:"password should be 6 or more characters"})
                 }else{
                     hasher.hash_password(data.password).then(hashed=>{
                         data.password = hashed;
                         userModel.findByIdAndUpdate(decoded_user._id, data, function(err){
-                            if(err) res.json({err:err, message:"error, could not update password"})
-                            res.json({code:"00", message:"password changed successfully."})
+                            if(err) res.status(501).json({err:err, message:"error, could not update password"})
+                            res.status(200).json({code:"00", message:"password changed successfully."})
                         })
                     })
                 }
@@ -269,9 +269,9 @@ exports.login=(req, res)=>{
                     userModel.findByIdAndDelete(user._id, (err)=>{
                        
                         if(err){
-                            res.json({code:"01", message:"error deleting account"})
+                            res.status(201).json({code:"01", message:"error deleting account"})
                         }else{
-                            res.json({code:"00", message:"account deleted successfully"})
+                            res.status(200).json({code:"00", message:"account deleted successfully"})
                             inviteModel.find({user:deleted_user_id}, (err, invitedUser)=>{
                                 for (const a of invitedUser) {
                                     inviteModel.findByIdAndDelete(a._id, (err)=>{

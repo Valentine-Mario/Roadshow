@@ -107,16 +107,16 @@ class Invite{
         auth_user.verifyInviteToken(req.token).then(decoded_user=>{
         hasher.compare_password(old_password, decoded_user.password).then(value=>{
             if(!value){
-                res.json({message:"wrong old password"})
+                res.status(201).json({message:"wrong old password"})
             }else{
                 if(data.password.length<6){
-                    res.json({code:"01", message:"password should be 6 or more characters"})
+                    res.status(201).json({code:"01", message:"password should be 6 or more characters"})
                 }else{
                     hasher.hash_password(data.password).then(hashed=>{
                         data.password = hashed;
                         inviteModel.findByIdAndUpdate(decoded_user._id, data, function(err){
-                            if(err) res.json({err:err, message:"error, could not update password"})
-                            res.json({code:"00", message:"password changed successfully."})
+                            if(err) res.status(501).json({err:err, message:"error, could not update password"})
+                            res.status(200).json({code:"00", message:"password changed successfully."})
                         })
                     })
                 }
