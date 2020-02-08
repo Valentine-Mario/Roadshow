@@ -29,11 +29,10 @@ class Payment{
         try{
             auth.verifyToken(req.token).then(user=>{
                 payment.find({user:user.id}, (err, user_card)=>{
-                    let card_nos = user_card.map(a => a.card_no);
-                    var cards=[]
-                    for (const a of card_nos) {
-                        var decrypted_value= encrypt.decrypt(a)
-                        cards.push(decrypted_value)
+                    var cards=[];
+                    for (const a of user_card) {
+                        var decrypted_value= encrypt.decrypt(a.card_no)
+                        cards.push({_id:a.id, card_no:decrypted_value})
                     }
                     res.status(200).json({code:"00", message:cards})
                 })
