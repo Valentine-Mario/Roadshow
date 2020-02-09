@@ -84,9 +84,10 @@ class Employee{
     }
         try{
             auth.verifyToken(req.token).then(async (user)=>{
-                employeeModel.paginate({user:user._id}, options, (err, employee))
-                if(err)res.status(201).json({code:"01", message:"error getting employee list"})
-                res.status(200).json({code:"00", message:employee})
+                employeeModel.paginate({user:user._id}, options, (err, employee)=>{
+                    if(err)res.status(201).json({code:"01", message:"error getting employee list"})
+                    res.status(200).json({code:"00", message:employee})
+                })
             })
         }catch(e){
             res.status(501)
