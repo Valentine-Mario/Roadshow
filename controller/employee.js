@@ -78,9 +78,9 @@ class Employee{
 
     getEmployee(req, res){
         var options={
-            page:parseInt(page, 10) || 1,
-            limit:parseInt(limit, 10) || 10,
-     }
+        page:parseInt(page, 10) || 1,
+        limit:parseInt(limit, 10) || 10
+    }
         try{
             auth.verifyToken(req.token).then(async (user)=>{
                 employeeModel.paginate({user:user._id}, options, (err, employee))
