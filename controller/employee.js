@@ -77,6 +77,7 @@ class Employee{
    
 
     getEmployee(req, res){
+        var {page, limit,}= req.query;
         var options={
         page:parseInt(page, 10) || 1,
         limit:parseInt(limit, 10) || 10
