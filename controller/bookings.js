@@ -48,7 +48,7 @@ exports.addHotelBooking=(req, res)=>{
 
                             BookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                                    res.status(201).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
                                    
                                     res.status(200).json({code:"00", message:"hotel booking created successfully"})
@@ -98,7 +98,7 @@ exports.addHotelBooking_nonUser=(req, res)=>{
                             data.user=null
                             BookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                                    res.status(201).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
                                     
                                     res.status(200).json({code:"00", message:"hotel booking created successfully"})
@@ -159,7 +159,7 @@ exports.addHotelBookingInvitedUser=(req, res)=>{
                             }
                             BookingModel.create(data, (err, hotelBooking)=>{
                                 if(err){
-                                    res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                                    res.status(201).json({code:"01", err:err, message:"error creating booking"})
                                 }else{
                                    
                                     res.status(200).json({code:"00", message:"hotel booking created successfully"})
@@ -208,7 +208,7 @@ exports.addCarBooking=(req, res)=>{
                     user.account_type=='Business' ? data.pending=true:data.pending=false
                     BookingModel.create(data, (err, carBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                             res.status(200).json({code:"00", message:"car booking created successfully"})
                         }
@@ -250,7 +250,7 @@ exports.addCarBooking_nonUser=(req, res)=>{
                     data.user=null
                     BookingModel.create(data, (err, carBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                             res.status(200).json({code:"00", message:"car booking created successfully"})
                         }
@@ -301,7 +301,7 @@ exports.addCarBookingInvitedUser=(req, res)=>{
                     }
                     BookingModel.create(data, (err, carBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                             res.status(200).json({code:"00", message:"car booking created successfully"})
                         }
@@ -348,7 +348,7 @@ exports.addVenueBooking=(req, res)=>{
 
                     BookingModel.create(data, (err, venueBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                            
                             res.status(200).json({code:"00", message:"venue booking created successfully"})
@@ -391,7 +391,7 @@ exports.addVenueBooking_nonUser=(req, res)=>{
                     data.price=parseInt(venue_price)*data.duration
                     BookingModel.create(data, (err, venueBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                             res.status(200).json({code:"00", message:"venue booking created successfully"})
                         }
@@ -444,7 +444,7 @@ exports.addVenueBookingInvitedUser=(req, res)=>{
                     }
                     BookingModel.create(data, (err, venueBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", err:err, message:"error creating booking"})
+                            res.status(201).json({code:"01", err:err, message:"error creating booking"})
                         }else{
                            
                             res.status(200).json({code:"00", message:"venue booking created successfully"})
@@ -491,7 +491,8 @@ exports.addFlight=(req, res)=>{
                     user.account_type=='Business' ? data.pending=true:data.pending=false
                     BookingModel.create(data, (err, flightBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", message:"error creating booking"})
+                            console.log(err)
+                            res.status(201).json({code:"01", message:"error creating booking"})
                         }else{
                            
                             res.status(200).json({code:"00", message:"flight booking created successfully"})
@@ -538,7 +539,7 @@ exports.addFlight_nonUser=(req, res)=>{
                     data.start_date=flight.departure_date
                     data.end_date=flight.arrival_date
                     BookingModel.create(data, (err, flightBooking)=>{
-                        if(err)res.status(501).json({code:"01", message:"error creating booking"})
+                        if(err)res.status(201).json({code:"01", message:"error creating booking"})
                         res.status(200).json({code:"00", message:"flight booking created successfully"})
                     })
                 })
@@ -588,7 +589,8 @@ exports.addFlightBookingInvitedUser=(req, res)=>{
                     }
                     BookingModel.create(data, (err, flightBooking)=>{
                         if(err){
-                            res.status(501).json({code:"01", message:"error creating booking"})
+
+                            res.status(201).json({code:"01", message:"error creating booking"})
                         }else{
                            
                             res.status(200).json({code:"00", message:"flight booking created successfully"})
@@ -619,7 +621,7 @@ exports.getAllUpcomingBookings=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$gte: new Date()}}, {"start_date":{$gte:new Date()}}]}, options, (err, booking)=>{
-                if(err) res.status(501).json({code:"01", message:"error retriving data"})
+                if(err) res.status(201).json({code:"01", message:"error retriving data"})
                 res.status(200).json({code:"00", message:booking})
             })
         })
@@ -642,7 +644,7 @@ exports.getAllPastTrips=(req, res)=>{
         try{
             auth_user.verifyToken(req.token).then(user=>{
                 BookingModel.paginate({$and:[{user:user._id}, {"end_date":{$lte: new Date()}}, {"start_date":{$lte: new Date()}}]}, options, (err, booking)=>{
-                    if(err) res.status(501).json({code:"01", message:"error retriving data"})
+                    if(err) res.status(201).json({code:"01", message:"error retriving data"})
                     res.status(200).json({code:"00", message:booking})
                 })
             })
@@ -665,7 +667,7 @@ exports.getAllCurrentTrips=(req, res)=>{
         try{
             auth_user.verifyToken(req.token).then(user=>{
                 BookingModel.paginate({$and:[{user:user.id}, {"start_date":{$lte: new Date()}}, {"end_date":{$gte:new Date()}}]}, options, (err, booking)=>{
-                    if(err) res.status(501).json({code:"01", message:"error retriving data"})
+                    if(err) res.status(201).json({code:"01", message:"error retriving data"})
                     res.status(200).json({code:"00", message:booking})
                 })
             })
@@ -688,7 +690,7 @@ exports.getAllPendingTrips=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             BookingModel.paginate({$and:[{user:user.id}, {pending:true}]}, options, (err, trips)=>{
-                if(err)res.status(501).json({code:"01", message:"error retriving pending trips"})
+                if(err)res.status(201).json({code:"01", message:"error retriving pending trips"})
                 res.status(200).json({code:"00", message:trips})
             })
         })
@@ -711,7 +713,7 @@ exports.getAllDeclinedTrips=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             BookingModel.paginate({$and:[{user:user.id}, {declined:true}]}, options, (err, trips)=>{
-                if(err)res.status(501).json({code:"01", message:"error retriving declined trips"})
+                if(err)res.status(201).json({code:"01", message:"error retriving declined trips"})
                 res.status(200).json({code:"00", message:trips})
             })
         })
@@ -734,7 +736,7 @@ exports.getAllAprovedTrips=(req, res)=>{
     try{
         auth_user.verifyToken(req.token).then(user=>{
             BookingModel.paginate({$and:[{user:user.id}, {declined:false}, {pending:false}]}, options, (err, trips)=>{
-                if(err)res.status(501).json({code:"01", message:"error retriving approved trips"})
+                if(err)res.status(201).json({code:"01", message:"error retriving approved trips"})
                 res.status(200).json({code:"00", message:trips})
             })
         })
@@ -765,7 +767,7 @@ exports.getBookingType=(req, res)=>{
 
               BookingModel.paginate({$and:[{user:user.id}, {type:value}]}, options, (err, trips)=>{
                 if(err){
-                    res.status(501).json({code:"01", message:"error retriving trips"})
+                    res.status(201).json({code:"01", message:"error retriving trips"})
                 }else{
                    
               res.status(200).json({code:"00", message:trips, sum_price:sum})

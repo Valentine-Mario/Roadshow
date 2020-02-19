@@ -140,28 +140,6 @@ class mailer{
     
     }
 
-    approval_mail(header, summary, email, link, type){
-            var mailOption={
-                from:`Sprintrip`,
-                to:email,
-                subject:header,
-                html:`
-                The following booking needs approval
-                ${summary}<br/>
-                <a href="https://rocky-mesa-69765.herokuapp.com/bizbookin/approve/${type}/${link}">click</a> to approve<br/>
-                <a href="https://rocky-mesa-69765.herokuapp.com/bizbookin/disapprove/${type}/${link}">click</a> to disapprove
-                `
-            };
-            transporter.sendMail(mailOption, function(err, info){
-                if(err){
-                    console.log(false, err)
-                }else{
-                    console.log(true)  
-                }
-            })
-        
-    }
-
 }
 
 module.exports=new mailer()
